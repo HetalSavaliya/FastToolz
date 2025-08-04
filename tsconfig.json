@@ -1,4 +1,5 @@
 {
+  // "$schema": "https://json.schemastore.org/tsconfig", // Uncomment if you want to specify schema
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -18,6 +19,7 @@
         "name": "next"
       }
     ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -22,8 +22,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pubID = "ca-pub-7640562353408963";
+
   return (
     <html lang="en">
+      {/* <head>
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=\${pubID}`}
+            crossOrigin="anonymous"
+          />
+      </head> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

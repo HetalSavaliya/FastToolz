@@ -1,9 +1,10 @@
 import Image from "next/image";
+import React from "react";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <main style={{ width: '100%' }} className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start **w-full**">
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -17,7 +18,7 @@ export default function Home() {
             Get started by editing{" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
               src/app/page.tsx
-            </code>
+            </code>{" "}
             .
           </li>
           <li className="tracking-[-.01em]">
