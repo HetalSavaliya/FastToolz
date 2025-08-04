@@ -2,6 +2,13 @@
 
 import { useEffect } from "react";
 
+// Fix: Extend window type inline
+declare global {
+  interface Window {
+    adsbygoogle: unknown[];
+  }
+}
+
 export default function AdSlot() {
   useEffect(() => {
     try {
