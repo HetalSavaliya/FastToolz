@@ -22,16 +22,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pubID = "ca-pub-7640562353408963";
 
   return (
     <html lang="en">
       <head>
-         <script
-  async
-  src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${pubID}`}
-  crossOrigin="anonymous"
-/>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
+     crossorigin="anonymous"></script>
 
       </head>
       <body
