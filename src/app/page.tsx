@@ -1,3 +1,4 @@
+import AdSlot from "@/components/AdSlot";
 import Image from "next/image";
 import React from "react";
 
@@ -51,6 +52,7 @@ export default function Home() {
             Read our docs
           </a>
         </div>
+         <AdSlot />
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
