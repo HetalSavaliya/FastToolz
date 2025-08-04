@@ -52,7 +52,9 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-         <AdSlot />
+        <div style={{ width: '100%' }}>
+  <AdSlot />
+</div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
