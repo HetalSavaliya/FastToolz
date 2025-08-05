@@ -28,7 +28,6 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
       file: "/books/story/The Hare and the Tortoise.pdf",
     },
   ],
-
   learn: [
     { title: "Alphabet Fun", file: "/books/learn/Alphabet Fun.pdf" },
     { title: "Basic English", file: "/books/learn/Basic English.pdf" },
@@ -50,7 +49,6 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
       file: "/books/learn/My First 100 Words.pdf",
     },
   ],
-
   coloring: [
     { title: "Fruits Coloring", file: "/books/coloring/Fruits Coloring.pdf" },
     { title: "Animals Coloring", file: "/books/coloring/Animals Coloring.pdf" },
@@ -68,7 +66,6 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
       file: "/books/coloring/Color the Alphabets.pdf",
     },
   ],
-
   grammar: [
     { title: "Practice Nouns", file: "/books/grammar/Practice Nouns.pdf" },
     { title: "Basic Verbs", file: "/books/grammar/Basic Verbs.pdf" },
@@ -86,7 +83,6 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
       file: "/books/grammar/Singular and Plural.pdf",
     },
   ],
-
   fun: [
     { title: "Matching Game Book", file: "/books/fun/Matching Game Book.pdf" },
     { title: "Maze Fun", file: "/books/fun/Maze Fun.pdf" },
@@ -100,37 +96,31 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
   ],
 };
 
+// ✅ PAGE FUNCTION
 export default function CategoryPage({
   params,
 }: {
   params: { category: string };
 }) {
   const { category } = params;
-
   const books = categoryBooks[category];
 
-  if (!books) {
-    return notFound();
-  }
+  if (!books) return notFound();
 
   return (
     <main className="p-6 max-w-5xl mx-auto text-gray-800">
-      {/* Back Link */}
       <div className="mb-6">
         <Link
           href="/"
           className="inline-flex items-center text-[#66AF85] font-medium hover:underline text-sm"
         >
-          <FaArrowLeft className="mr-2" /> Back to Home
+          <FaArrowLeft className="mr-2" />
+          Back to Home
         </Link>
       </div>
-
-      {/* Page Title */}
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-[#66AF85] capitalize">
         {category} Books
       </h1>
-
-      {/* Book Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {books.map((book, idx) => (
           <div
@@ -153,4 +143,11 @@ export default function CategoryPage({
       </section>
     </main>
   );
+}
+
+// ✅ STATIC PARAM GENERATOR (important for dynamic routes)
+export async function generateStaticParams() {
+  return Object.keys(categoryBooks).map((category) => ({
+    category,
+  }));
 }
