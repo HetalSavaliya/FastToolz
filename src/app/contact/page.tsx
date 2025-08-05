@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ContactPage() {
   return (
@@ -22,9 +23,12 @@ export default function ContactPage() {
 
       {/* ✅ Info Section */}
       <section className="mb-16 text-gray-800">
-        <h2 className="text-2xl font-bold mb-4 text-[#66AF85]">We’d Love to Hear from You!</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[#66AF85]">
+          We’d Love to Hear from You!
+        </h2>
         <p className="mb-4 leading-relaxed">
-          This is a free learning platform for kids in Std 1 to 5. If you have ideas or feedback, feel free to reach out.
+          This is a free learning platform for kids in Std 1 to 5. If you have
+          ideas or feedback, feel free to reach out.
         </p>
 
         <div className="bg-green-50 border border-green-200 p-6 rounded-xl shadow-sm space-y-4 text-sm">
@@ -34,25 +38,31 @@ export default function ContactPage() {
           </div>
           <div>
             🌐 <strong>Website:</strong>{" "}
-            <a
+            <Link
               href="https://hetal10.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline"
             >
               hetal10.vercel.app
-            </a>
+            </Link>
           </div>
           <div>
-            💡 <strong>Feedback:</strong> You can leave a message in the comment box on the{" "}
-            <a href="/" className="text-blue-600 underline">home page</a>.
+            💡 <strong>Feedback:</strong> You can leave a message in the comment
+            box on the{" "}
+            <Link href="/" className="text-blue-600 underline">
+              home page
+            </Link>
+            .
           </div>
         </div>
       </section>
 
       {/* ✅ Feedback Form (optional / placeholder) */}
       <section className="mb-20">
-        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">Leave a Message</h2>
+        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">
+          Leave a Message
+        </h2>
         <form className="bg-gray-50 p-6 rounded shadow-sm space-y-4">
           <input
             type="text"

@@ -58,9 +58,13 @@ export default function HomePage() {
 
       {/* ✅ Welcome Section */}
       <section className="text-center mb-12">
-        <h2 className="text-2xl font-bold mb-3 text-[#66AF85]">Welcome to Stories, Colors, and Learning for Young Minds</h2>
+        <h2 className="text-2xl font-bold mb-3 text-[#66AF85]">
+          Welcome to Stories, Colors, and Learning for Young Minds
+        </h2>
         <p className="text-gray-700 max-w-2xl mx-auto leading-relaxed">
-          This free learning platform is designed for children aged 2 to 9 years old. We offer stories, phonics practice, coloring books, grammar worksheets, and fun learning games — all in one place.
+          This free learning platform is designed for children aged 2 to 9 years
+          old. We offer stories, phonics practice, coloring books, grammar
+          worksheets, and fun learning games — all in one place.
         </p>
       </section>
 
@@ -78,7 +82,9 @@ export default function HomePage() {
               className="group block bg-gradient-to-br from-[#eafbf1] via-white to-[#f7f1fc] border border-gray-200 rounded-2xl p-6 shadow-md transform transition hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-[#066f55]">{cat.title}</h3>
+                <h3 className="text-xl font-bold text-[#066f55]">
+                  {cat.title}
+                </h3>
                 <span className="text-3xl">{cat.emoji}</span>
               </div>
 
@@ -98,23 +104,41 @@ export default function HomePage() {
 
       {/* ✅ Downloadable Resources */}
       <section className="mb-16">
-        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">Free Downloadable Resources</h2>
+        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">
+          Free Downloadable Resources
+        </h2>
         <ul className="space-y-4">
           <li className="bg-green-50 p-4 rounded shadow-sm border flex justify-between items-center">
             <span>🖨️ Story Time Sample PDF</span>
-            <a href="/downloads/story-sample.pdf" download className="text-blue-600 underline">Download</a>
+            <Link
+              href="/downloads/story-sample.pdf"
+              download
+              className="text-blue-600 underline"
+            >
+              Download
+            </Link>
           </li>
           <li className="bg-green-50 p-4 rounded shadow-sm border flex justify-between items-center">
             <span>📚 Alphabet Tracing Worksheet</span>
-            <a href="/downloads/abc-tracing.pdf" download className="text-blue-600 underline">Download</a>
+            <Link
+              href="/downloads/abc-tracing.pdf"
+              download
+              className="text-blue-600 underline"
+            >
+              Download
+            </Link>
           </li>
         </ul>
       </section>
 
       {/* ✅ Feedback Section */}
       <section className="mb-20">
-        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">Leave a Comment or Suggestion</h2>
-        <p className="text-gray-600 mb-4">We’d love to hear from parents, teachers, and learners!</p>
+        <h2 className="text-xl font-semibold mb-4 text-[#66AF85]">
+          Leave a Comment or Suggestion
+        </h2>
+        <p className="text-gray-600 mb-4">
+          We’d love to hear from parents, teachers, and learners!
+        </p>
         <form className="bg-gray-50 p-4 rounded shadow-sm space-y-4 border border-gray-200">
           <input
             type="text"
