@@ -2,6 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 
+type PageProps = {
+  params: {
+    bookCategory: string;
+  };
+};
+
 const categoryBooks: Record<string, { title: string; file: string }[]> = {
   story: [
     { title: "The Clever Fox", file: "/books/story/The Clever Fox.pdf" },
@@ -97,13 +103,9 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
 };
 
 // ✅ PAGE FUNCTION
-export default function CategoryPage({
-  params,
-}: {
-  params: { category: string };
-}) {
-  const { category } = params;
-  const books = categoryBooks[category];
+export default function CategoryPage({ params }: PageProps) {
+  const { bookCategory } = params;
+  const books = categoryBooks[bookCategory];
 
   if (!books) return notFound();
 
@@ -119,12 +121,12 @@ export default function CategoryPage({
         </Link>
       </div>
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-[#66AF85] capitalize">
-        {category} Books
+        {bookCategory} Books
       </h1>
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {books.map((book, idx) => (
+        {books.map((book) => (
           <div
-            key={idx}
+            key={book.title}
             className="border rounded-lg p-5 shadow hover:shadow-lg transition bg-white"
           >
             <h3 className="text-lg font-semibold mb-3 text-[#333]">
@@ -147,7 +149,26 @@ export default function CategoryPage({
 
 // ✅ STATIC PARAM GENERATOR (important for dynamic routes)
 export async function generateStaticParams() {
-  return Object.keys(categoryBooks).map((category) => ({
-    category,
-  }));
+  return [
+    { bookCategory: "story" },
+    { bookCategory: "learn" },
+    { bookCategory: "coloring" },
+    { bookCategory: "grammar" },
+    { bookCategory: "fun" },
+  ];
+}
+// ✅ METADATA (for SEO)
+// ✅ METADATA (for SEO)
+export async function generateMetadata({
+  params,
+}: {
+  params: { bookCategory: string };
+}) {
+  const { bookCategory } = params;
+  return {
+    title: `\${
+      bookCategory.charAt(0).toUpperCase() + bookCategory.slice(1)
+    } Books`,
+    description: `Explore our collection of \${bookCategory} books for kids. Download engaging and educational PDFs to enhance learning.`,
+  };
 }
