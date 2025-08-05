@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-// Fix: Extend window type inline
 declare global {
   interface Window {
     adsbygoogle: unknown[];
@@ -10,28 +9,30 @@ declare global {
 }
 
 export default function AdSlot() {
-  useEffect(() => {
-  const timeout = setTimeout(() => {
-    try {
-      if (typeof window !== "undefined") {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (e) {
-      console.error("AdsbyGoogle push error:", e);
-    }
-  }, 100); // Give layout some time to calculate width
+  const adRef = useRef<HTMLDivElement>(null);
+  const hasInitialized = useRef(false); // ✅ track if pushed
 
-  return () => clearTimeout(timeout);
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined" && adRef.current && !hasInitialized.current) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        hasInitialized.current = true; // ✅ only push once
+      } catch (e) {
+        console.error("AdsbyGoogle push error:", e);
+      }
+    }
+  }, []);
 
   return (
     <ins
+      ref={adRef}
       className="adsbygoogle"
-      style={{ display: "block", width: "100%", textAlign: "center" }}
+      style={{ display: "block", width: "100%", height: 100 }}
       data-ad-client="ca-pub-8822732191267343"
       data-ad-slot="7404255757"
       data-ad-format="auto"
       data-full-width-responsive="true"
+      data-adtest="on"
     ></ins>
   );
 }
