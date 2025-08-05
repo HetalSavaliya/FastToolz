@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <h2 className="text-lg font-semibold text-[#66AF85]">
-          4. Children's Privacy
+          4. Children&apos;s Privacy
         </h2>
         <p>
           This site is designed specifically for children in Std 1 to 5, with a

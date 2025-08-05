@@ -8,7 +8,7 @@ export default function Footer() {
         Young Minds. All rights reserved.
       </p>
       <p className="mt-2">
-        Made with ❤️ for kids' education. |{" "}
+        Made with ❤️ for kids&apos; education. |{" "}
         <Link href="/privacy-policy" className="underline text-blue-600">
           Privacy
         </Link>{" "}
