@@ -2,12 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 
-interface CategoryPageProps {
-  params: {
-    category: string;
-  };
-}
-
 const categoryBooks: Record<string, { title: string; file: string }[]> = {
   story: [
     { title: "The Clever Fox", file: "/books/story/The Clever Fox.pdf" },
@@ -106,7 +100,11 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
   ],
 };
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default function CategoryPage({
+  params,
+}: {
+  params: { category: string };
+}) {
   const { category } = params;
 
   const books = categoryBooks[category];
