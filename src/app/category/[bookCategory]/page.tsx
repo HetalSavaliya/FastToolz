@@ -2,12 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
 
-type PageProps = {
-  params: {
-    bookCategory: string;
-  };
-};
-
 const categoryBooks: Record<string, { title: string; file: string }[]> = {
   story: [
     { title: "The Clever Fox", file: "/books/story/The Clever Fox.pdf" },
@@ -103,8 +97,12 @@ const categoryBooks: Record<string, { title: string; file: string }[]> = {
 };
 
 // ✅ PAGE FUNCTION
-export default function CategoryPage({ params }: PageProps) {
-  const { bookCategory } = params;
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ bookCategory: string }>;
+}) {
+  const { bookCategory } = await params;
   const books = categoryBooks[bookCategory];
 
   if (!books) return notFound();
@@ -156,19 +154,4 @@ export async function generateStaticParams() {
     { bookCategory: "grammar" },
     { bookCategory: "fun" },
   ];
-}
-// ✅ METADATA (for SEO)
-// ✅ METADATA (for SEO)
-export async function generateMetadata({
-  params,
-}: {
-  params: { bookCategory: string };
-}) {
-  const { bookCategory } = params;
-  return {
-    title: `\${
-      bookCategory.charAt(0).toUpperCase() + bookCategory.slice(1)
-    } Books`,
-    description: `Explore our collection of \${bookCategory} books for kids. Download engaging and educational PDFs to enhance learning.`,
-  };
 }
