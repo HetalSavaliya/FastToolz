@@ -9,11 +9,15 @@ declare global {
 }
 
 export default function AdSlot() {
-  const adRef = useRef<HTMLDivElement>(null);
+  const adRef = useRef<HTMLModElement>(null); // Change the type here
   const hasInitialized = useRef(false); // ✅ track if pushed
 
   useEffect(() => {
-    if (typeof window !== "undefined" && adRef.current && !hasInitialized.current) {
+    if (
+      typeof window !== "undefined" &&
+      adRef.current &&
+      !hasInitialized.current
+    ) {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
         hasInitialized.current = true; // ✅ only push once
