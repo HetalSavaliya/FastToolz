@@ -9,15 +9,20 @@ import {
   faRotateLeft,
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
+import { saveAs } from "file-saver";
+import { Buffer } from "buffer";
+import axios, { AxiosError } from "axios";
 
-export default function PdfToWordConverter() {
+global.Buffer = Buffer;
+
+export default function PDFUnlockPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [convertedBlob, setConvertedBlob] = useState<Blob | null>(null);
-  const [docxName, setDocxName] = useState<string>("converted.docx");
+  const [password, setPassword] = useState("");
+  const [unlockedBlob, setUnlockedBlob] = useState<Blob | null>(null);
+  const [pdfName, setPdfName] = useState("unlocked.pdf");
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFileChange = async (file: File) => {
     if (file.type !== "application/pdf") {
@@ -26,8 +31,8 @@ export default function PdfToWordConverter() {
     }
     setErrorMessage(null);
     setPdfFile(file);
-    setDocxName(file.name.replace(/\.pdf$/i, ".docx"));
-    setConvertedBlob(null);
+    setPdfName(file.name.replace(/\.pdf$/, ""));
+    setUnlockedBlob(null);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -36,9 +41,9 @@ export default function PdfToWordConverter() {
     if (file) handleFileChange(file);
   };
 
-  const handleConvert = async () => {
-    if (!pdfFile) {
-      setErrorMessage("Please upload a PDF file.");
+  const handleUnlock = async () => {
+    if (!pdfFile || !password.trim()) {
+      setErrorMessage("Please upload a PDF and enter the password to unlock.");
       return;
     }
     setErrorMessage(null);
@@ -46,36 +51,44 @@ export default function PdfToWordConverter() {
 
     try {
       const pdfBytes = await pdfFile.arrayBuffer();
-      const uint8Array = new Uint8Array(pdfBytes);
-      let binaryString = "";
-      for (const byte of uint8Array) {
-        binaryString += String.fromCharCode(byte);
-      }
-      const pdfBase64 = btoa(binaryString);
+      const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
 
-      const response = await axios.post("/api/pdf-to-word", {
-        pdfBytes: pdfBase64,
-        filename: pdfFile.name,
+      const { data } = await axios.post("/api/pdf-unlock", {
+        pdfBytes: pdfBytesBase64,
+        password: password,
+        filename: pdfName,
       });
 
-      const data = response.data;
-      const wordBytes = Uint8Array.from(atob(data.wordBytesBase64), (c) =>
-        c.charCodeAt(0)
+      const unlockedPdfBytes = new Uint8Array(
+        Buffer.from(data.unlockedPdfBytesBase64, "base64")
       );
+      const blob = new Blob([unlockedPdfBytes], { type: "application/pdf" });
 
-      const blob = new Blob([wordBytes], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-
-      setConvertedBlob(blob);
-      setDocxName(data.filename || docxName);
+      setUnlockedBlob(blob);
+      setPdfName(data.filename);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (err) {
-      console.error(err);
-      setErrorMessage("Failed to convert PDF to Word.");
+    } catch (error: unknown) {
+      console.error("Error unlocking PDF:", error);
+
+      let message = "Unknown error";
+
+      if (error instanceof Error) {
+        message = error.message;
+      }
+
+      if (
+        (error as AxiosError).response &&
+        typeof (error as AxiosError).response?.data === "object" &&
+        typeof ((error as AxiosError).response?.data as any).message ===
+          "string"
+      ) {
+        message = ((error as AxiosError).response?.data as any).message;
+      }
+
+      setErrorMessage(`Failed to unlock PDF: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -83,18 +96,14 @@ export default function PdfToWordConverter() {
 
   const handleReset = () => {
     setPdfFile(null);
-    setConvertedBlob(null);
+    setPassword("");
+    setUnlockedBlob(null);
     setErrorMessage(null);
   };
 
   const handleDownload = () => {
-    if (convertedBlob) {
-      const url = URL.createObjectURL(convertedBlob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = docxName;
-      a.click();
-      URL.revokeObjectURL(url);
+    if (unlockedBlob) {
+      saveAs(unlockedBlob, pdfName);
     }
   };
 
@@ -110,10 +119,10 @@ export default function PdfToWordConverter() {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-          📄 PDF to Word Converter
+          🔓 PDF Unlock
         </h1>
         <p className="text-gray-600">
-          Upload your PDF and convert it to an editable Word document.
+          Upload a password-protected PDF and enter its password to unlock it.
         </p>
       </div>
 
@@ -144,40 +153,53 @@ export default function PdfToWordConverter() {
 
       {/* Controls */}
       {pdfFile && (
-        <div className="mb-6 flex flex-wrap gap-4">
-          <button
-            onClick={handleConvert}
-            disabled={loading}
-            className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
-          >
-            {loading ? "Converting..." : "Convert to Word"}
-          </button>
+        <div className="mb-6">
+          <h3 className="font-semibold text-gray-700 mb-2">
+            🔑 Enter Password
+          </h3>
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter current password"
+              className="border rounded px-3 py-2 mt-1 w-64"
+            />
 
-          <button
-            onClick={handleReset}
-            className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-          >
-            <FontAwesomeIcon icon={faRotateLeft} />
-            Reset
-          </button>
+            <button
+              onClick={handleUnlock}
+              disabled={loading}
+              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
+            >
+              Unlock PDF
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+            >
+              <FontAwesomeIcon icon={faRotateLeft} />
+              Reset
+            </button>
+          </div>
         </div>
       )}
 
       {/* Download */}
-      {convertedBlob && (
+      {unlockedBlob && (
         <div
           ref={resultRef}
           className="mt-6 p-4 border border-green-300 bg-green-50 rounded"
         >
           <h3 className="text-green-700 font-medium mb-2">
-            ✅ Conversion successful! Your Word document is ready.
+            ✅ PDF is unlocked and ready to download!
           </h3>
           <button
             onClick={handleDownload}
             className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faDownload} />
-            Download {docxName}
+            Download Unlocked PDF
           </button>
         </div>
       )}

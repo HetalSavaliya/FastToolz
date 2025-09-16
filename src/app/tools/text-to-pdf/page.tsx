@@ -6,11 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faUpload,
-  faDownload,
   faRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import { pdf } from "@react-pdf/renderer";
 import {
+  pdf,
   Document,
   Page,
   Text as PdfText,

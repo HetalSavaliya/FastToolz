@@ -13,9 +13,7 @@ import {
   faUnlock,
   faFileSignature,
   faRotate,
-  faWandMagicSparkles,
   faFileWord,
-  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Tool list with FontAwesome icons and descriptions
@@ -31,12 +29,6 @@ const tools = [
     description: "Split large PDFs into smaller files.",
     path: "/tools/pdf-split",
     icon: faScissors,
-  },
-  {
-    name: "Video Download",
-    description: "Download videos from YouTube and other platforms.",
-    path: "/tools/video-download",
-    icon: faDownload,
   },
   {
     name: "Image Resizer",
@@ -68,12 +60,7 @@ const tools = [
     path: "/tools/pdf-to-word",
     icon: faFileWord,
   },
-  {
-    name: "PDF to Excel",
-    description: "Convert tables from PDFs into Excel spreadsheets.",
-    path: "/tools/pdf-to-excel",
-    icon: faFileExcel,
-  },
+
   {
     name: "PDF Rotate",
     description: "Rotate pages in your PDF document.",
@@ -86,13 +73,6 @@ const tools = [
     path: "/tools/pdf-sign",
     icon: faFileSignature,
   },
-  {
-    name: "Image Background Remover",
-    description: "Remove the background from any image automatically.",
-    path: "/tools/image-background-remover",
-    icon: faWandMagicSparkles,
-  },
-  // Add more tools as needed
 ];
 
 export default function HomePage() {
@@ -142,3 +122,5 @@ export default function HomePage() {
     </main>
   );
 }
+
+// docker-compose up --build tool-app-dev

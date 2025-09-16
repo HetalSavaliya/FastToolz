@@ -6,11 +6,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 
 // 🔧 Add more tools as needed
-const navLinks = [
-  { name: "All Tools", path: "/" },
-  { name: "PDF Merge", path: "/tools/pdf-merge" },
-  { name: "Video Download", path: "/tools/video-download" },
-];
+const navLinks = [{ name: "All Tools", path: "/" }];
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);

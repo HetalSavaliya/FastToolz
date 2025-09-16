@@ -1,4 +1,3 @@
-// Your client-side component (e.g., pages/pdf-password-protect.tsx)
 "use client";
 
 import { useState, useRef } from "react";
@@ -9,21 +8,25 @@ import {
   faUpload,
   faRotateLeft,
   faDownload,
+  faArrowsRotate,
 } from "@fortawesome/free-solid-svg-icons";
-import { saveAs } from "file-saver"; // Make sure this is still installed
-import { Buffer } from "buffer"; // Import Buffer
+import { saveAs } from "file-saver";
+import { Buffer } from "buffer";
 import axios, { AxiosError } from "axios";
 
 global.Buffer = Buffer;
 
-export default function PDFPasswordProtectPage() {
+export default function PDFRotatePage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [password, setPassword] = useState("");
-  const [protectedBlob, setProtectedBlob] = useState<Blob | null>(null);
-  const [pdfName, setPdfName] = useState("protected.pdf");
+  const [rotatedBlob, setRotatedBlob] = useState<Blob | null>(null);
+  const [pdfName, setPdfName] = useState("rotated.pdf");
   const [loading, setLoading] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [rotation, setRotation] = useState<number>(90); // default angle
+  const [applyTo, setApplyTo] = useState<"all" | "single" | "multiple">("all");
+  const [pageNumbers, setPageNumbers] = useState<number[]>([]);
 
   const handleFileChange = async (file: File) => {
     if (file.type !== "application/pdf") {
@@ -32,8 +35,8 @@ export default function PDFPasswordProtectPage() {
     }
     setErrorMessage(null);
     setPdfFile(file);
-    setPdfName(file.name.replace(/\.pdf\$/, ""));
-    setProtectedBlob(null);
+    setPdfName(file.name.replace(/\.pdf$/, "-rotated.pdf"));
+    setRotatedBlob(null);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -42,9 +45,9 @@ export default function PDFPasswordProtectPage() {
     if (file) handleFileChange(file);
   };
 
-  const handleProtect = async () => {
-    if (!pdfFile || !password.trim()) {
-      setErrorMessage("Please upload a PDF and enter a password.");
+  const handleRotate = async () => {
+    if (!pdfFile) {
+      setErrorMessage("Please upload a PDF file first.");
       return;
     }
     setErrorMessage(null);
@@ -54,25 +57,32 @@ export default function PDFPasswordProtectPage() {
       const pdfBytes = await pdfFile.arrayBuffer();
       const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
 
-      const { data } = await axios.post("/api/protect-pdf", {
+      const payload: any = {
         pdfBytes: pdfBytesBase64,
-        password: password,
+        rotation,
         filename: pdfName,
-      });
+        applyTo,
+      };
 
-      const encryptedPdfBytes = new Uint8Array(
-        Buffer.from(data.encryptedPdfBytesBase64, "base64")
+      if (applyTo === "single" || applyTo === "multiple") {
+        payload.pageNumbers = pageNumbers;
+      }
+
+      const { data } = await axios.post("/api/pdf-rotate", payload);
+
+      const rotatedPdfBytes = new Uint8Array(
+        Buffer.from(data.rotatedPdfBytesBase64, "base64")
       );
-      const blob = new Blob([encryptedPdfBytes], { type: "application/pdf" });
+      const blob = new Blob([rotatedPdfBytes], { type: "application/pdf" });
 
-      setProtectedBlob(blob);
+      setRotatedBlob(blob);
       setPdfName(data.filename);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     } catch (error: unknown) {
-      console.error("Error protecting PDF:", error);
+      console.error("Error rotating PDF:", error);
 
       let message = "Unknown error";
 
@@ -80,7 +90,6 @@ export default function PDFPasswordProtectPage() {
         message = error.message;
       }
 
-      // Axios-specific error handling
       if (
         (error as AxiosError).response &&
         typeof (error as AxiosError).response?.data === "object" &&
@@ -90,7 +99,7 @@ export default function PDFPasswordProtectPage() {
         message = ((error as AxiosError).response?.data as any).message;
       }
 
-      setErrorMessage(`Failed to protect PDF: ${message}`);
+      setErrorMessage(`Failed to rotate PDF: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -98,14 +107,16 @@ export default function PDFPasswordProtectPage() {
 
   const handleReset = () => {
     setPdfFile(null);
-    setPassword("");
-    setProtectedBlob(null);
+    setRotatedBlob(null);
     setErrorMessage(null);
+    setRotation(90);
+    setApplyTo("all");
+    setPageNumbers([]);
   };
 
   const handleDownload = () => {
-    if (protectedBlob) {
-      saveAs(protectedBlob, pdfName);
+    if (rotatedBlob) {
+      saveAs(rotatedBlob, pdfName);
     }
   };
 
@@ -121,10 +132,11 @@ export default function PDFPasswordProtectPage() {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-          🔐 PDF Password Protect
+          🔄 PDF Rotate
         </h1>
         <p className="text-gray-600">
-          Upload your PDF and set a password to protect it.
+          Upload a PDF and rotate all pages, a single page, or multiple pages by
+          any angle.
         </p>
       </div>
 
@@ -155,23 +167,81 @@ export default function PDFPasswordProtectPage() {
 
       {/* Controls */}
       {pdfFile && (
-        <div className="mb-6">
-          <h3 className="font-semibold text-gray-700 mb-2">🔒 Set Password</h3>
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+        <div className="mb-6 space-y-4">
+          {/* Rotation Input */}
+          <div>
+            <label className="block text-gray-700 font-medium">
+              Rotation Angle (any number)
+            </label>
             <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              className="border rounded px-3 py-2 mt-1 w-64"
+              type="number"
+              value={rotation}
+              onChange={(e) => setRotation(Number(e.target.value))}
+              className="border rounded px-3 py-2 mt-1 w-40"
             />
+          </div>
 
-            <button
-              onClick={handleProtect}
-              disabled={loading}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
+          {/* Apply To */}
+          <div>
+            <label className="block text-gray-700 font-medium">Apply To</label>
+            <select
+              value={applyTo}
+              onChange={(e) =>
+                setApplyTo(e.target.value as "all" | "single" | "multiple")
+              }
+              className="border rounded px-3 py-2 mt-1 w-40"
             >
-              Protect PDF
+              <option value="all">All Pages</option>
+              <option value="single">Single Page</option>
+              <option value="multiple">Multiple Pages</option>
+            </select>
+          </div>
+
+          {/* Page Input */}
+          {applyTo === "single" && (
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Page Number (starting from 1)
+              </label>
+              <input
+                type="number"
+                min={1}
+                onChange={(e) => setPageNumbers([Number(e.target.value) - 1])}
+                className="border rounded px-3 py-2 mt-1 w-40"
+              />
+            </div>
+          )}
+
+          {applyTo === "multiple" && (
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Page Numbers (comma-separated, starting from 1)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 2,4,7"
+                onChange={(e) =>
+                  setPageNumbers(
+                    e.target.value
+                      .split(",")
+                      .map((n) => Number(n.trim()) - 1)
+                      .filter((n) => !isNaN(n) && n >= 0)
+                  )
+                }
+                className="border rounded px-3 py-2 mt-1 w-60"
+              />
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3 mt-4">
+            <button
+              onClick={handleRotate}
+              disabled={loading}
+              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50 flex items-center gap-2"
+            >
+              <FontAwesomeIcon icon={faArrowsRotate} />
+              {loading ? "Rotating..." : "Rotate PDF"}
             </button>
 
             <button
@@ -186,20 +256,20 @@ export default function PDFPasswordProtectPage() {
       )}
 
       {/* Download */}
-      {protectedBlob && (
+      {rotatedBlob && (
         <div
           ref={resultRef}
           className="mt-6 p-4 border border-green-300 bg-green-50 rounded"
         >
           <h3 className="text-green-700 font-medium mb-2">
-            ✅ PDF is password protected and ready to download!
+            ✅ PDF rotated successfully and ready to download!
           </h3>
           <button
             onClick={handleDownload}
             className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faDownload} />
-            Download Protected PDF
+            Download Rotated PDF
           </button>
         </div>
       )}

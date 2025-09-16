@@ -92,8 +92,9 @@ export default function PdfSplitterPage() {
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      console.error("Split PDF error:", message);
       alert("Failed to split PDF.");
     }
 

@@ -10,6 +10,7 @@ import {
   faDownload,
   faRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import NextImage from "next/image";
 
 export default function ImageResizerPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -59,8 +60,9 @@ export default function ImageResizerPage() {
         }, 100);
       };
       reader.readAsDataURL(resizedImage);
-    } catch (err) {
-      alert("Failed to resize image.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert(`Failed to resize image: ${message}`);
       setLoading(false);
     }
   };
@@ -185,7 +187,7 @@ export default function ImageResizerPage() {
               <h3 className="font-semibold text-gray-700 mb-2">
                 📷 Original Preview
               </h3>
-              <img
+              <NextImage
                 src={previewUrl}
                 alt="Original"
                 className="border rounded shadow-sm max-w-full"
@@ -206,9 +208,9 @@ export default function ImageResizerPage() {
             {/* Original */}
             <div>
               <h3 className="text-gray-700 font-medium mb-1">Original Image</h3>
-              <img
+              <NextImage
                 src={previewUrl!}
-                alt="Original"
+                alt="Original-2"
                 className="border rounded shadow-sm max-w-full"
               />
               <p className="text-xs text-gray-500 mt-2">
@@ -219,7 +221,7 @@ export default function ImageResizerPage() {
             {/* Resized */}
             <div>
               <h3 className="text-gray-700 font-medium mb-1">Resized Image</h3>
-              <img
+              <NextImage
                 src={resizedUrl}
                 alt="Resized"
                 className="border rounded shadow-sm max-w-full"

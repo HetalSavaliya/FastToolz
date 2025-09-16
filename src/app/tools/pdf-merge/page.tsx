@@ -46,7 +46,9 @@ export default function PdfMergePage() {
   const resetFiles = () => {
     setFiles([]);
     setDownloadUrl(null);
-    fileInputRef.current?.value && (fileInputRef.current.value = "");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const mergePDFs = async () => {
