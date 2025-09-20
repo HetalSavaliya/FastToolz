@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,43 +5,38 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 
-const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Contact", path: "/contact" },
-  { name: "Privacy", path: "/privacy-policy" },
-  { name: "Terms", path: "/terms" },
-];
+// 🔧 Add more tools as needed
+const navLinks = [{ name: "All Tools", path: "/" }];
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
   return (
-    <header className="bg-white border-b shadow-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* ✅ Logo & Site Title */}
+    <header className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 text-white sticky top-0 z-50 shadow-md">
+      <div className=" mx-auto px-4 py-4 flex justify-between items-center">
+        {/* 🔰 Logo & Title */}
         <Link href="/" className="flex items-center space-x-3">
           <Image
-            src="/images/logo.png" // Make sure logo.png is in /public/images
-            alt="Stories, Colors, and Learning for Young Minds Logo"
+            src="/logo.svg"
+            alt="Tools Logo"
             width={40}
             height={40}
-            className="rounded-full"
+            className="rounded-full border border-white"
           />
-          <span className="text-xl font-bold tracking-tight text-[#66AF85]">
-            Stories, Colors, and Learning for Young Minds
+          <span className="text-xl font-bold tracking-tight">
+            Cyarmor Tools Hub
           </span>
         </Link>
 
-        {/* ✅ Desktop Navigation */}
-        <nav className="hidden md:flex space-x-5 text-sm font-medium">
+        {/* 💻 Desktop Navigation */}
+        <nav className="hidden md:flex space-x-6 text-sm font-medium">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}
-              className={`hover:text-[#66AF85] transition ${
-                pathname === link.path ? "text-[#66AF85] font-semibold" : "text-gray-700"
+              className={`hover:underline transition ${
+                pathname === link.path ? "font-bold underline" : ""
               }`}
             >
               {link.name}
@@ -50,14 +44,14 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* ✅ Mobile Menu Button */}
+        {/* 📱 Mobile Menu Toggle */}
         <button
           className="md:hidden focus:outline-none"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle navigation"
         >
           <svg
-            className="w-6 h-6 text-gray-700"
+            className="w-6 h-6 text-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -82,17 +76,17 @@ export default function Header() {
         </button>
       </div>
 
-      {/* ✅ Mobile Nav Menu */}
+      {/* 📱 Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden px-4 pb-4 bg-white border-t">
+        <div className="md:hidden px-4 pb-4 bg-white text-gray-800 border-t">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}
               onClick={() => setMobileOpen(false)}
               className={`block py-2 text-sm ${
-                pathname === link.path ? "text-[#66AF85] font-semibold" : "text-gray-700"
-              } hover:text-[#66AF85] transition`}
+                pathname === link.path ? "text-blue-600 font-semibold" : ""
+              } hover:text-blue-500 transition`}
             >
               {link.name}
             </Link>
