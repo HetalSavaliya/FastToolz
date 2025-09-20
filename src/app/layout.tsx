@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const metadata2 = {
+  title: "My App",
+  description: "Next.js with Google Adsense",
+};
+
 export default function ToolsLayout({
   children,
 }: {
@@ -38,12 +43,20 @@ export default function ToolsLayout({
     <html lang="en">
       <head>
         <Script
-          id="adsense-script-tools"
+          id="adsense-script"
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script id="adsense-init" strategy="afterInteractive">
+          {`
+            (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-3940256099942544", // ✅ TEST ID
+              enable_page_level_ads: true
+            });
+          `}
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-gray-900 flex flex-col min-h-screen`}

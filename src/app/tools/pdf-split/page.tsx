@@ -78,7 +78,10 @@ export default function PdfSplitterPage() {
         }
 
         const newPdfBytes = await newPdf.save();
-        const blob = new Blob([newPdfBytes], { type: "application/pdf" });
+
+        const blob = new Blob([new Uint8Array(newPdfBytes)], {
+          type: "application/pdf",
+        });
 
         parts.push({
           partNumber: i + 1,
@@ -166,7 +169,7 @@ export default function PdfSplitterPage() {
   };
 
   return (
-    <main className="max-w-5xl mx-auto px-6 py-10">
+    <main className="w-full px-4 py-6">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"

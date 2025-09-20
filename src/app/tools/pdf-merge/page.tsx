@@ -68,14 +68,16 @@ export default function PdfMergePage() {
     }
 
     const mergedPdfBytes = await mergedPdf.save();
-    const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
+    const blob = new Blob([new Uint8Array(mergedPdfBytes)], {
+      type: "application/pdf",
+    });
     const url = URL.createObjectURL(blob);
     setDownloadUrl(url);
     setMerging(false);
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-10">
+    <main className="w-full px-4 py-6">
       {/* 🔙 Back Button */}
       <Link
         href="/"

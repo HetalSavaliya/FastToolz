@@ -85,7 +85,7 @@ export default function TextToPdfPage() {
   };
 
   return (
-    <main className="max-w-5xl mx-auto px-6 py-10">
+    <main className="w-full px-4 py-6">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"

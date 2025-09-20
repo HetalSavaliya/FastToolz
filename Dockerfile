@@ -5,9 +5,9 @@ FROM node:18 AS builder
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Install dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
 # Copy source code
 COPY . .
@@ -21,10 +21,19 @@ RUN NEXT_DISABLE_ESLINT=true npm run build
 # ============================
 FROM node:18-slim AS runner
 
-# Install only required system packages
+# Install required system packages (ffmpeg + python + qpdf + libreoffice)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libreoffice libreoffice-writer qpdf && \
+    apt-get install -y --no-install-recommends \
+    ffmpeg \
+    python3 python3-pip python3-venv \
+    libreoffice libreoffice-writer \
+    qpdf && \
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir pdf2docx && \
     rm -rf /var/lib/apt/lists/*
+
+# Add venv bin to PATH
+ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
 
@@ -32,10 +41,10 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/package*.json ./package.json
 
 # Expose production port
 EXPOSE 5000
 
-# Start Next.js production server
+# Run Next.js in production mode
 CMD ["npm", "start"]

@@ -12,57 +12,50 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import NextImage from "next/image";
 
-export default function ImageResizerPage() {
+export default function ImageCompressorPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [resizedUrl, setResizedUrl] = useState<string | null>(null);
-  const [width, setWidth] = useState<number>(300);
-  const [height, setHeight] = useState<number>(300);
-  const [originalWidth, setOriginalWidth] = useState<number>(0);
-  const [originalHeight, setOriginalHeight] = useState<number>(0);
+  const [compressedUrl, setCompressedUrl] = useState<string | null>(null);
+  const [originalSize, setOriginalSize] = useState<number>(0);
+  const [compressedSize, setCompressedSize] = useState<number>(0);
+  const [quality, setQuality] = useState<number>(80);
   const [loading, setLoading] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (file: File) => {
     setImageFile(file);
-    setResizedUrl(null);
+    setCompressedUrl(null);
 
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
-
-    const img = new Image();
-    img.onload = () => {
-      setOriginalWidth(img.width);
-      setOriginalHeight(img.height);
-      setWidth(img.width);
-      setHeight(img.height);
-    };
-    img.src = url;
+    setOriginalSize(file.size / 1024); // KB
   };
 
-  const handleResize = async () => {
+  const handleCompress = async () => {
     if (!imageFile) return;
     setLoading(true);
 
     try {
-      const resizedImage = await imageCompression(imageFile, {
-        maxWidthOrHeight: Math.max(width, height),
+      const compressedImage = await imageCompression(imageFile, {
+        maxSizeMB: quality / 100, // dynamic compression
         useWebWorker: true,
       });
 
+      setCompressedSize(compressedImage.size / 1024);
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setResizedUrl(reader.result as string);
+        setCompressedUrl(reader.result as string);
         setLoading(false);
         setTimeout(() => {
           resultRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 100);
       };
-      reader.readAsDataURL(resizedImage);
+      reader.readAsDataURL(compressedImage);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
-      alert(`Failed to resize image: ${message}`);
+      alert(`Failed to compress image: ${message}`);
       setLoading(false);
     }
   };
@@ -86,11 +79,10 @@ export default function ImageResizerPage() {
   const handleReset = () => {
     setImageFile(null);
     setPreviewUrl(null);
-    setResizedUrl(null);
-    setOriginalWidth(0);
-    setOriginalHeight(0);
-    setWidth(300);
-    setHeight(300);
+    setCompressedUrl(null);
+    setOriginalSize(0);
+    setCompressedSize(0);
+    setQuality(80);
   };
 
   return (
@@ -105,11 +97,11 @@ export default function ImageResizerPage() {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-          🖼️ Image Resizer
+          📉 Image Compressor
         </h1>
         <p className="text-gray-600">
-          Upload or drag an image, set your desired dimensions, and download the
-          resized image directly from your browser.
+          Upload or drag an image, adjust compression quality, and download the
+          optimized image directly from your browser.
         </p>
       </div>
 
@@ -138,27 +130,28 @@ export default function ImageResizerPage() {
         </label>
       </div>
 
-      {/* Resize Controls + Preview */}
+      {/* Compression Controls + Preview */}
       {previewUrl && (
         <>
           <div className="mb-10 flex flex-col gap-4">
-            <h3 className="font-semibold text-gray-700">📐 Resize</h3>
-            <div className="flex gap-4 flex-wrap">
+            <h3 className="font-semibold text-gray-700">⚙️ Compression</h3>
+            <div className="flex gap-4 flex-wrap items-center">
               <label className="flex flex-col text-sm">
-                Width (px)
+                Quality (%)
                 <input
                   type="number"
-                  value={width}
-                  onChange={(e) => setWidth(parseInt(e.target.value))}
-                  className="border rounded px-2 py-1 mt-1 w-32"
-                />
-              </label>
-              <label className="flex flex-col text-sm">
-                Height (px)
-                <input
-                  type="number"
-                  value={height}
-                  onChange={(e) => setHeight(parseInt(e.target.value))}
+                  min="10"
+                  max="100"
+                  value={quality || ""} // prevent NaN showing in UI
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "") {
+                      setQuality(0); // or some default like 80
+                    } else {
+                      const num = parseInt(val, 10);
+                      if (!isNaN(num)) setQuality(num);
+                    }
+                  }}
                   className="border rounded px-2 py-1 mt-1 w-32"
                 />
               </label>
@@ -166,11 +159,11 @@ export default function ImageResizerPage() {
 
             <div className="flex gap-3">
               <button
-                onClick={handleResize}
+                onClick={handleCompress}
                 disabled={loading}
                 className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
               >
-                {loading ? "Resizing..." : "Resize Image"}
+                {loading ? "Compressing..." : "Compress Image"}
               </button>
               <button
                 onClick={handleReset}
@@ -182,7 +175,7 @@ export default function ImageResizerPage() {
             </div>
           </div>
 
-          {!resizedUrl && (
+          {!compressedUrl && (
             <div className="mt-8">
               <h3 className="font-semibold text-gray-700 mb-2">
                 📷 Original Preview
@@ -190,20 +183,20 @@ export default function ImageResizerPage() {
               <NextImage
                 src={previewUrl}
                 alt="Original"
-                width={"400"}
-                height={"400"}
+                width={400}
+                height={400}
                 className="border rounded shadow-sm max-w-full"
               />
               <p className="text-xs text-gray-500 mt-2">
-                Dimensions: {originalWidth}px × {originalHeight}px
+                Size: {originalSize.toFixed(2)} KB
               </p>
             </div>
           )}
         </>
       )}
 
-      {/* Resized Result Section */}
-      {resizedUrl && (
+      {/* Compressed Result Section */}
+      {compressedUrl && (
         <div ref={resultRef} className="mt-12">
           <h2 className="font-semibold text-gray-700 mb-4">🆚 Comparison</h2>
           <div className="grid lg:grid-cols-2 gap-8">
@@ -213,35 +206,37 @@ export default function ImageResizerPage() {
               <NextImage
                 src={previewUrl!}
                 alt="Original-2"
-                width={"400"}
-                height={"400"}
+                width={400}
+                height={400}
                 className="border rounded shadow-sm max-w-full"
               />
               <p className="text-xs text-gray-500 mt-2">
-                {originalWidth}px × {originalHeight}px
+                {originalSize.toFixed(2)} KB
               </p>
             </div>
 
-            {/* Resized */}
+            {/* Compressed */}
             <div>
-              <h3 className="text-gray-700 font-medium mb-1">Resized Image</h3>
+              <h3 className="text-gray-700 font-medium mb-1">
+                Compressed Image
+              </h3>
               <NextImage
-                src={resizedUrl}
-                alt="Resized"
-                width={"400"}
-                height={"400"}
+                src={compressedUrl}
+                alt="Compressed"
+                width={400}
+                height={400}
                 className="border rounded shadow-sm max-w-full"
               />
               <p className="text-xs text-gray-500 mt-2">
-                {width}px × {height}px
+                {compressedSize.toFixed(2)} KB
               </p>
               <a
-                href={resizedUrl}
-                download="resized-image.jpg"
+                href={compressedUrl}
+                download="compressed-image.jpg"
                 className="inline-flex items-center gap-2 text-[#66AF85] font-medium underline mt-2"
               >
                 <FontAwesomeIcon icon={faDownload} />
-                Download Resized Image
+                Download Compressed Image
               </a>
             </div>
           </div>
