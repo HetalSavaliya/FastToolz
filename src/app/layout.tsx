@@ -1,9 +1,8 @@
 // src/app/tools/layout.tsx
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import "./globals.css"; // Make sure to go up to root if needed
+import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -29,11 +28,6 @@ export const metadata: Metadata = {
   },
 };
 
-export const metadata2 = {
-  title: "My App",
-  description: "Next.js with Google Adsense",
-};
-
 export default function ToolsLayout({
   children,
 }: {
@@ -52,7 +46,7 @@ export default function ToolsLayout({
         <Script id="adsense-init" strategy="afterInteractive">
           {`
             (adsbygoogle = window.adsbygoogle || []).push({
-              google_ad_client: "ca-pub-3940256099942544", // ✅ TEST ID
+              google_ad_client: "ca-pub-3940256099942544",
               enable_page_level_ads: true
             });
           `}
