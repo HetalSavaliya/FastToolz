@@ -2,8 +2,7 @@
 import { categories } from "@/data/categories";
 import type { Metadata } from "next";
 
-export const baseUrl =
-  typeof window !== "undefined" ? window.location.origin : "";
+export const baseUrl = "https://my-nextjs-vite-app.onrender.com";
 
 const allKeywords = categories
   .flatMap((category) => category.tools.map((tool) => tool.name.toLowerCase()))
@@ -49,7 +48,7 @@ export const defaultSEO: Metadata = {
     title: "Free Online Tools - PDF, Image, Video, Text & Developer Tools",
     description:
       "100% free online tools for productivity, PDF editing, media conversion, and more.",
-    images: [baseUrl + "/og-image.png"],
+    images: ["https://placehold.co/1200x630?text=Free+Online+Tools"],
     creator: "@hetalsavaliya",
   },
   robots: {
@@ -88,9 +87,7 @@ export function generateToolSEO({
     openGraph: {
       title: `${title} - Free Online Tool`,
       description,
-      url: `${
-        typeof window !== "undefined" ? window.location.origin : ""
-      }/tools/${slug}`,
+      url: `${baseUrl}/tools/${slug}`,
       siteName: "FreeTools",
       images: [
         {
@@ -108,6 +105,13 @@ export function generateToolSEO({
       description,
       images: [imageUrl],
       creator: "@hetalsavaliya",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: `${baseUrl}/tools/${slug}`,
     },
   };
 }
