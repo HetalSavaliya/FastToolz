@@ -25,6 +25,10 @@ export default function MainContentPage() {
 
   return (
     <main className="px-6 py-10 max-w-6xl mx-auto">
+      {/* Top ad */}
+      <div className="mb-8">
+        <AdSlot adClient="ca-pub-8822732191267343" adSlot="7404255757" />
+      </div>
       {/* Page Title */}
       <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
         🚀 Explore Free Online Tools
@@ -85,9 +89,18 @@ export default function MainContentPage() {
           )
       )}
 
+      {/* Side ad (for large screens) */}
+      <div className="hidden lg:block fixed right-0 top-32 w-72">
+        <AdSlot
+          adClient="ca-pub-8822732191267343"
+          adSlot="2856658891"
+          style={{ minHeight: "250px" }}
+        />
+      </div>
+
       {/* Bottom Ad Slot */}
       <div className="my-8">
-        <AdSlot />
+        <AdSlot adClient="ca-pub-8822732191267343" adSlot="1234567890" />
       </div>
     </main>
   );

@@ -1,4 +1,4 @@
-// AdSlot.tsx
+// src/components/AdSlot.tsx
 "use client";
 import { useEffect, useRef } from "react";
 
@@ -8,21 +8,22 @@ declare global {
   }
 }
 
-export default function AdSlot() {
+interface AdSlotProps {
+  adClient: string;
+  adSlot: string;
+  style?: React.CSSProperties;
+}
+
+export default function AdSlot({ adClient, adSlot, style }: AdSlotProps) {
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    const ad = adRef.current;
-    if (!ad) return;
+    if (!adRef.current) return;
 
-    // Only render ad, don't push page-level ads again
-    if (!(ad as any).dataset.adsenseInitialized) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        (ad as any).dataset.adsenseInitialized = "true";
-      } catch (err) {
-        console.error("Adsense error:", err);
-      }
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+      console.error("Adsense error:", err);
     }
   }, []);
 
@@ -30,12 +31,11 @@ export default function AdSlot() {
     <ins
       ref={adRef}
       className="adsbygoogle block"
-      style={{ display: "block", minHeight: "100px" }}
-      data-ad-client="ca-pub-8822732191267343"
-      data-ad-slot="1234567890"
+      style={{ display: "block", minHeight: "100px", ...style }}
+      data-ad-client={adClient}
+      data-ad-slot={adSlot}
       data-ad-format="auto"
       data-full-width-responsive="true"
-      // testing
     ></ins>
   );
 }
