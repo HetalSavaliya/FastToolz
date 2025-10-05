@@ -6,10 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import AdSlot from "@/components/AdSlot";
 
-import { defaultSEO } from "@/lib/seo";
 import { categories } from "@/data/categories";
-
-export const metadata = defaultSEO;
 
 export default function MainContentPage() {
   const [search, setSearch] = useState("");
@@ -26,9 +23,9 @@ export default function MainContentPage() {
   return (
     <main className="px-6 py-10 max-w-6xl mx-auto">
       {/* Top ad */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <AdSlot adClient="ca-pub-8822732191267343" adSlot="7404255757" />
-      </div>
+      </div> */}
       {/* Page Title */}
       <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
         🚀 Explore Free Online Tools

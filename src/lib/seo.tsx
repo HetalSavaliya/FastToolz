@@ -2,7 +2,8 @@
 import { categories } from "@/data/categories";
 import type { Metadata } from "next";
 
-const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+export const baseUrl =
+  typeof window !== "undefined" ? window.location.origin : "";
 
 const allKeywords = categories
   .flatMap((category) => category.tools.map((tool) => tool.name.toLowerCase()))
@@ -50,6 +51,13 @@ export const defaultSEO: Metadata = {
       "100% free online tools for productivity, PDF editing, media conversion, and more.",
     images: [baseUrl + "/og-image.png"],
     creator: "@hetalsavaliya",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: baseUrl,
   },
 };
 
