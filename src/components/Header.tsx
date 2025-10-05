@@ -24,9 +24,7 @@ export default function Header() {
             height={40}
             className="rounded-full border border-white"
           />
-          <span className="text-xl font-bold tracking-tight">
-            Cyarmor Tools Hub
-          </span>
+          <span className="text-xl font-bold tracking-tight">HJ Tools Hub</span>
         </Link>
 
         {/* 💻 Desktop Navigation */}

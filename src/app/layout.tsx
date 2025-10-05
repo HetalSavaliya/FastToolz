@@ -36,21 +36,12 @@ export default function ToolsLayout({
   return (
     <html lang="en">
       <head>
+        {/* Global Adsense Script */}
         <Script
-          id="adsense-script"
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
-        <Script id="adsense-init" strategy="afterInteractive">
-          {`
-            (adsbygoogle = window.adsbygoogle || []).push({
-              google_ad_client: "ca-pub-3940256099942544",
-              enable_page_level_ads: true
-            });
-          `}
-        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-gray-900 flex flex-col min-h-screen`}
