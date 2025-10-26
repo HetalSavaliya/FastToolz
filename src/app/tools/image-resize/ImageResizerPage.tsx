@@ -102,7 +102,6 @@ export default function ImageResizerPage() {
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
-
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
           🖼️ Image Resizer
@@ -112,7 +111,6 @@ export default function ImageResizerPage() {
           resized image directly from your browser.
         </p>
       </div>
-
       {/* Upload area */}
       <div
         onDrop={handleDrop}
@@ -137,7 +135,6 @@ export default function ImageResizerPage() {
           </div>
         </label>
       </div>
-
       {/* Resize Controls + Preview */}
       {previewUrl && (
         <>
@@ -201,7 +198,6 @@ export default function ImageResizerPage() {
           )}
         </>
       )}
-
       {/* Resized Result Section */}
       {resizedUrl && (
         <div ref={resultRef} className="mt-12">
@@ -247,6 +243,84 @@ export default function ImageResizerPage() {
           </div>
         </div>
       )}
+      {/* -------------------------------------------------------- */}     {" "}
+      {/* 🖼️ ADDED: RICH, ORIGINAL CONTENT FOR GOOGLE ADS / SEO */}     {" "}
+      {/* -------------------------------------------------------- */}     {" "}
+      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
+               {" "}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                    The Quickest Way to Adjust Image Dimensions Online        {" "}
+        </h2>
+               {" "}
+        <p className="mb-4">
+                    Whether you're preparing images for social media, updating
+          product photos for an e-commerce site, or setting banner sizes for a
+          blog, having the correct dimensions is critical. Our **Image Resizer**
+          tool offers a free, fast, and secure way to change the width and
+          height of any image file. Because all the work is done locally on your
+          device, your files remain completely private and are **never
+          uploaded** to a server. This client-side processing ensures maximum
+          speed and confidentiality for your sensitive photos.        {" "}
+        </p>
+               {" "}
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+                    Why Use a Dedicated Image Resizer?        {" "}
+        </h3>
+               {" "}
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+                     {" "}
+          <li>
+            **Improve Web Performance:** Resizing large images to the size they
+            are actually displayed at is a fundamental step in **web
+            optimization** and improves page loading speed.
+          </li>
+                     {" "}
+          <li>
+            **Maintain Aspect Ratio:** While we allow custom dimensions, careful
+            resizing ensures your images don't look stretched or distorted. Our
+            tool is optimized to maintain high-quality scaling.
+          </li>
+                     {" "}
+          <li>
+            **Batch Compatibility:** Quickly adapt images for common platforms
+            like **Facebook, Instagram, LinkedIn**, and specific website layout
+            requirements.
+          </li>
+                 {" "}
+        </ul>
+               {" "}
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+                    Features of Our Browser-Powered Resizing Tool        {" "}
+        </h3>
+               {" "}
+        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
+                     {" "}
+          <li>
+            **Privacy First:** Zero file transmission. Your images stay on your
+            device throughout the entire resizing process.
+          </li>
+                     {" "}
+          <li>
+            **Immediate Dimensions:** The tool instantly reads and displays the
+            original width and height of your uploaded image.
+          </li>
+                     {" "}
+          <li>
+            **High-Fidelity Output:** We use advanced browser APIs to ensure the
+            resized image maintains crisp quality and detail, even when
+            dramatically scaled down.
+          </li>
+                 {" "}
+        </ol>
+               {" "}
+        <p className="mt-6 text-sm text-gray-600">
+                    *Note: When changing an image's dimensions drastically, be
+          aware that you may lose detail or alter the original aspect ratio if
+          the new dimensions do not match the old proportions.*        {" "}
+        </p>
+             {" "}
+      </section>
+         
     </main>
   );
 }

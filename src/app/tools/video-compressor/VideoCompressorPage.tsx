@@ -102,6 +102,77 @@ export default function VideoCompressorPage() {
           )}
         </div>
       )}
+      <section>
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
+            🎞️ Why Compress Your Videos?
+          </h2>
+          <p className="text-lg text-gray-700 mb-8">
+            Large video files can be a headache when it comes to sharing,
+            uploading, or storing them. Our **Video Compressor** quickly and
+            efficiently reduces the file size of your clips, making them easier
+            to handle across all platforms—all without a noticeable drop in
+            visual quality.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🌐 Improved Shareability
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">📥</span>
+                  **Faster Uploads:** Upload videos to YouTube, social media, or
+                  cloud storage significantly quicker.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">📧</span>
+                  **Email Attachments:** Compress videos to fit within strict
+                  email size limits for easy sending.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">💻</span>
+                  **Website Optimization:** Use smaller video files on your
+                  website to improve loading speed and user experience.
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                💾 Save Space and Time
+              </h3>
+              <ol className="space-y-4 text-gray-600 list-decimal pl-5">
+                <li>
+                  **Free Up Storage:** Save significant space on your hard
+                  drives, phones, and cloud storage accounts.
+                </li>
+                <li>
+                  **Efficient Workflow:** Avoid waiting hours for large files to
+                  process or transfer.
+                </li>
+                <li>
+                  **Quality Control:** Our compression balances size reduction
+                  with visual fidelity, ensuring your audience still enjoys a
+                  clear picture.
+                </li>
+              </ol>
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                <p className="text-sm font-medium text-gray-500">
+                  **Tip:** We aim to reduce file sizes by up to 50% while
+                  maintaining the video's original resolution.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-lg text-green-700 font-medium mt-10">
+            Start compressing your videos now for hassle-free sharing and
+            storage!
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

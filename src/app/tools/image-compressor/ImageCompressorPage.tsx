@@ -94,7 +94,6 @@ export default function ImageCompressorPage() {
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
-
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
           📉 Image Compressor
@@ -104,7 +103,6 @@ export default function ImageCompressorPage() {
           optimized image directly from your browser.
         </p>
       </div>
-
       {/* Upload area */}
       <div
         onDrop={handleDrop}
@@ -129,7 +127,6 @@ export default function ImageCompressorPage() {
           </div>
         </label>
       </div>
-
       {/* Compression Controls + Preview */}
       {previewUrl && (
         <>
@@ -194,7 +191,6 @@ export default function ImageCompressorPage() {
           )}
         </>
       )}
-
       {/* Compressed Result Section */}
       {compressedUrl && (
         <div ref={resultRef} className="mt-12">
@@ -242,6 +238,89 @@ export default function ImageCompressorPage() {
           </div>
         </div>
       )}
+      {/* -------------------------------------------------------- */}     {" "}
+      {/* 🖼️ ADDED: RICH, ORIGINAL CONTENT FOR GOOGLE ADS / SEO */}     {" "}
+      {/* -------------------------------------------------------- */}     {" "}
+      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
+               {" "}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                    Why Image Compression is Essential        {" "}
+        </h2>
+               {" "}
+        <p className="mb-4">
+                    In today's digital landscape, the size of your images
+          directly impacts the **speed and performance** of your website or
+          application. Large, unoptimized images slow down page loading,
+          frustrate users, and negatively affect your SEO rankings. Our **Image
+          Compressor** tool solves this by providing a simple, client-side
+          solution to dramatically reduce file sizes without noticeable loss in
+          visual quality.        {" "}
+        </p>
+               {" "}
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+                    Lossy vs. Lossless Compression        {" "}
+        </h3>
+               {" "}
+        <p className="mb-4">
+                    This tool primarily uses **lossy compression** (like JPEG),
+          which intelligently removes redundant data from the image file. You
+          control this process directly using the **Quality (%)** slider.
+          Setting a quality level of **80%** often achieves a significant file
+          size reduction (up to 80-90%) while maintaining excellent visual
+          fidelity. We process the image using a **Web Worker** to ensure your
+          browser remains responsive, providing a smooth and fast compression
+          experience.        {" "}
+        </p>
+               {" "}
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+                    Benefits of Our Browser-Based Tool        {" "}
+        </h3>
+               {" "}
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+                     {" "}
+          <li>
+            **Complete Privacy:** All processing happens entirely within your
+            browser (client-side). Your image files are **never uploaded** to a
+            server.
+          </li>
+                     {" "}
+          <li>
+            **Immediate Feedback:** See the exact file size reduction instantly
+            with a clear before-and-after size comparison.
+          </li>
+                     {" "}
+          <li>
+            **Flexible Control:** Easily adjust the target quality to find the
+            perfect balance between file size and image sharpness for your
+            specific needs.
+          </li>
+                 {" "}
+        </ul>
+               {" "}
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+                    Simple Steps to Optimize Your Images        {" "}
+        </h3>
+               {" "}
+        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
+                     {" "}
+          <li>
+            **Upload:** Drag and drop your image (JPEG, PNG, etc.) or click to
+            select a file.
+          </li>
+                     {" "}
+          <li>
+            **Adjust:** Set your desired **Quality (%)** level. Lower numbers
+            mean smaller files and more compression.
+          </li>
+                     {" "}
+          <li>
+            **Download:** Click **"Compress Image"** and then download your
+            optimized file to use immediately for web, email, or sharing.
+          </li>
+                 {" "}
+        </ol>
+             {" "}
+      </section>
     </main>
   );
 }

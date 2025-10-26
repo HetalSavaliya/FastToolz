@@ -283,6 +283,77 @@ export default function PdfSplitterPage() {
           </div>
         </div>
       )}
+      {/* -------------------------------------------------------- */}
+      {/* 📚 RICH CONTENT SECTION */}
+      {/* -------------------------------------------------------- */}
+      <section className="mt-16 pt-8 border-t border-gray-200 text-gray-700">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          Why Use a PDF Splitter?
+        </h2>
+        <p className="mb-4">
+          Splitting a PDF is one of the most common and powerful document
+          management tasks. It allows you to transform a single, monolithic
+          file—such as a large annual report, a compiled user manual, or a
+          single scan of multiple agreements—into smaller, focused documents.
+          This is essential for organization and collaboration.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Key Features and Benefits
+        </h3>
+        <ul className="list-disc list-inside space-y-3 mb-6 ml-4">
+          <li>
+            **Granular Control:** Specify exact page ranges (e.g., **1-5** for
+            Chapter 1, **10-12** for the Appendix). This precision ensures each
+            new file contains only the required content.
+          </li>
+          <li>
+            **Automatic Cleanup:** Our tool handles the non-specified pages
+            automatically. If you define{" "}
+            <code className="bg-gray-100 px-1 rounded text-gray-800">1-5</code>{" "}
+            in a 10-page document, pages 6 through 10 will be grouped into a
+            final "remainder" part, ensuring no content is lost.
+          </li>
+          <li>
+            **Easier Sharing:** Small files are faster to email and upload,
+            making it easier to share only the relevant sections with colleagues
+            or clients.
+          </li>
+          <li>
+            **File Management:** Breaking a large PDF into smaller components
+            simplifies indexing and archiving in document management systems.
+          </li>
+        </ul>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          How to Define Your Ranges
+        </h3>
+        <p>
+          The range input field accepts a comma-separated list of page numbers
+          and ranges. Remember these simple rules:
+        </p>
+        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mt-3">
+          <p className="font-mono text-sm mb-2">
+            <code className="bg-gray-200 px-1 rounded text-gray-800">
+              1, 5, 10
+            </code>
+            : Creates three separate files, each containing a single page.
+          </p>
+          <p className="font-mono text-sm mb-2">
+            <code className="bg-gray-200 px-1 rounded text-gray-800">
+              2-4, 7-9
+            </code>
+            : Creates a file with pages 2, 3, and 4, and another file with pages
+            7, 8, and 9.
+          </p>
+          <p className="font-mono text-sm">
+            <code className="bg-gray-200 px-1 rounded text-gray-800">
+              1-1, 1-1
+            </code>
+            : Invalid, as pages cannot be duplicated in the output ranges.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

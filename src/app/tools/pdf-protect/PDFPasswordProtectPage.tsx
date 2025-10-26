@@ -206,6 +206,55 @@ export default function PDFPasswordProtectPage() {
 
       {/* Error Message */}
       {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
+      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Secure Your Documents: The Necessity of PDF Encryption
+        </h2>
+        <p className="mb-4">
+          In a world where sensitive information is frequently exchanged via
+          email and cloud storage, **password-protecting your PDF files** is a
+          fundamental security practice. Whether dealing with financial records,
+          legal contracts, or confidential reports, encryption ensures that only
+          authorized individuals with the correct password can view the
+          document's contents. This tool is designed to provide robust security
+          by encrypting the document's contents, making the data unreadable
+          without the key.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          How PDF Encryption Works
+        </h3>
+        <p className="mb-4">
+          When a PDF is password-protected, the tool uses industry-standard
+          **AES (Advanced Encryption Standard)** to scramble the data. The
+          password you set acts as the key to unlock the file. Unlike simple
+          permissions, which can sometimes be bypassed, true encryption locks
+          the entire content. Furthermore, you should **always choose a strong,
+          unique password** for critical documents to maximize protection
+          against brute-force attacks.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Security and Privacy Guarantees
+        </h3>
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+          <li>
+            **Data Integrity:** The protection process maintains the original
+            document formatting and quality.
+          </li>
+          <li>
+            **Zero Data Logging:** We do not store or log your uploaded PDFs or
+            the passwords you use. The ideal process for protection (though
+            mocked here) executes the encryption immediately and provides the
+            file for download.
+          </li>
+          <li>
+            **Cross-Platform Compatibility:** Password-protected PDFs can be
+            opened on virtually any device or operating system using standard
+            PDF readers (Acrobat, Preview, etc.).
+          </li>
+        </ul>
+      </section>
     </main>
   );
 }

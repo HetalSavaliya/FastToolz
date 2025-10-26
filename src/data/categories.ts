@@ -16,10 +16,21 @@ import {
     faRulerCombined,
     faPlay,
     faQrcode,
-    faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const categories = [
+    // {
+
+    //     title: "AI Tools (Free)",
+    //     tools: [
+    //         {
+    //             name: "Free AI Chat",
+    //             description: "Chat with a free AI powered by open-source models.",
+    //             path: "/tools/free-ai-chat",
+    //             icon: faRobot,
+    //         },
+    //     ],
+    // },
     {
         title: "📄 PDF Tools",
         tools: [
@@ -100,12 +111,12 @@ export const categories = [
                 path: "/tools/video-compressor",
                 icon: faCompress,
             },
-            {
-                name: "Video to MP3",
-                description: "Download audio from YouTube videos in MP3 format.",
-                path: "/tools/video-to-mp3",
-                icon: faMusic,
-            },
+            // {
+            //     name: "Video to MP3",
+            //     description: "Extract and convert the audio track from video files to MP3 format.",
+            //     path: "/tools/video-to-mp3",
+            //     icon: faMusic,
+            // },
         ],
     },
     {

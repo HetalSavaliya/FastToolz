@@ -85,6 +85,57 @@ export default function JSONFormatterPage() {
           {formatted}
         </div>
       )}
+      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          The Essential Online JSON Formatter and Validator
+        </h2>
+        <p className="mb-4">
+          Our **JSON Formatter and Validator** provides a clean, user-friendly
+          interface for transforming compact or hard-to-read JSON strings into
+          beautifully formatted, indented text. This tool is crucial for
+          **debugging APIs**, analyzing configuration files, and ensuring data
+          structures adhere to strict JSON standards. By automatically applying
+          indentation, it saves developers countless hours spent manually
+          scanning for syntax errors.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Built-in JSON Validation
+        </h3>
+        <p className="mb-4">
+          Beyond mere formatting, this tool acts as a real-time **JSON
+          validator**. When you click "Format & Validate," the application
+          attempts to parse the input using the browser's native JavaScript
+          parser. If your input contains any syntax errors—such as trailing
+          commas, unquoted property names, or mismatched braces—it will fail
+          gracefully and notify you with a specific error message. This helps
+          you **troubleshoot data issues instantly** before sending requests to
+          your server or pipeline.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Key Features for Productivity
+        </h3>
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+          <li>
+            **Client-Side Processing:** All parsing and formatting occur
+            entirely in your browser. **No data is sent to our servers**,
+            ensuring your sensitive payloads remain 100% private.
+          </li>
+          <li>
+            **Pretty Print:** Formats the output with two-space indentation
+            (standard setting) for maximum readability.
+          </li>
+          <li>
+            **One-Click Copy:** Easily copy the beautifully formatted code
+            directly to your clipboard using the dedicated "Copy Output" button.
+          </li>
+          <li>
+            **Error Isolation:** Provides instant feedback on invalid syntax to
+            streamline your debugging process.
+          </li>
+        </ul>
+      </section>
     </main>
   );
 }

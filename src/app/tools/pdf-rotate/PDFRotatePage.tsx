@@ -276,6 +276,77 @@ export default function PDFRotatePage() {
 
       {/* Error Message */}
       {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
+      <section className="mt-12 pt-8 border-t border-gray-200 text-gray-700 max-w-full">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Perfecting Your Documents: The Essential Guide to PDF Rotation
+        </h2>
+        <p className="mb-4">
+          Have you ever scanned a document only to find it tilted, or received a
+          professional report where one page is stuck in **landscape mode**?
+          Misaligned pages disrupt reading flow and undermine professionalism.
+          Our **PDF Rotate tool** is designed to solve this common problem
+          quickly and accurately, allowing you to control the orientation of
+          your digital documents.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Why Rotation is More Than Just Flipping a Page
+        </h3>
+        <p className="mb-4">
+          Effective document management requires precision. Most basic tools
+          only offer fixed $90^\circ$ increments, which isn't enough when you
+          have a page that is slightly skewed by a scanner or needs an
+          unconventional orientation for technical layouts. This tool gives you
+          **total flexibility**, allowing you to input **any degree** of
+          rotation—not just $90^\circ$, $180^\circ$, or $270^\circ$. This
+          feature is essential for:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+          <li>
+            **Correcting Scanner Skew:** Fine-tune documents that are only
+            slightly off-kilter.
+          </li>
+          <li>
+            **Standardizing Orientation:** Quickly convert all landscape pages
+            to portrait, or vice-versa, for consistent viewing.
+          </li>
+          <li>
+            **Improving Accessibility:** Ensure your documents are comfortable
+            and accessible for everyone, regardless of the device they use for
+            viewing.
+          </li>
+        </ul>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Targeted Rotation: Control at the Page Level
+        </h3>
+        <p className="mb-4">
+          Often, you don't need to rotate the entire file—only a few pages
+          require adjustment. The PDF Rotate tool provides three options for
+          precise application:
+        </p>
+        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
+          <li>
+            **All Pages:** Apply the rotation angle uniformly across the entire
+            PDF, perfect for correcting a whole file scanned sideways.
+          </li>
+          <li>
+            **Single Page:** Target one specific page (e.g., page $3$) that
+            needs a specific rotation, leaving the rest of the document
+            untouched.
+          </li>
+          <li>
+            **Multiple Pages:** Use comma-separated page numbers to adjust
+            several pages at once (e.g., $2, 4, 7$). This saves significant time
+            compared to isolating each page manually.
+          </li>
+        </ol>
+        <p>
+          By offering both custom angle control and granular page selection,
+          this tool ensures your final PDF is exactly how it should be:
+          **perfectly aligned and ready to share.**
+        </p>
+      </section>
     </main>
   );
 }

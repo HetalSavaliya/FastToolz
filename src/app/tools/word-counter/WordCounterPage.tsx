@@ -68,6 +68,78 @@ export default function WordCounterPage() {
           <p className="text-2xl font-bold">{readingTime} min</p>
         </div>
       </div>
+      <section>
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
+            🧮 Instant Word Count and Readability Metrics
+          </h2>
+          <p className="text-lg text-gray-700 mb-8">
+            Whether you're writing an essay with a strict limit, drafting an
+            email, or optimizing content for web reading, having **accurate word
+            and character counts** is essential. Our **Word Counter** provides
+            instant, precise metrics for any text you paste or type.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🎯 Meet Your Writing Targets
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">✍️</span>
+                  **Word Count:** The primary metric for essays, articles, and
+                  reports. Ensure you stay within minimum and maximum
+                  requirements effortlessly.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">🅰️</span>
+                  **Character Count:** Crucial for social media (like
+                  X/Twitter), titles, meta descriptions, and fields with
+                  specific character limits.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">⏱️</span>
+                  **Estimated Reading Time:** Gauge the engagement level of your
+                  content by providing an estimated time based on an average
+                  reading speed (200 words per minute).
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🚀 Features for Efficiency
+              </h3>
+              <ol className="space-y-4 text-gray-600 list-decimal pl-5">
+                <li>
+                  **Real-Time Updates:** Counts are updated the moment you type
+                  or paste, giving you immediate feedback.
+                </li>
+                <li>
+                  **Zero Uploads:** All counting is done instantly in your
+                  browser—no need to upload files, ensuring your privacy.
+                </li>
+                <li>
+                  **Whitespace Handling:** The word count intelligently handles
+                  multiple spaces and line breaks, giving you an accurate count
+                  of usable words.
+                </li>
+              </ol>
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                <p className="text-sm font-medium text-gray-500">
+                  This tool is perfect for students, journalists, content
+                  creators, and anyone needing precise text analysis.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-lg text-green-700 font-medium mt-10">
+            Start analyzing your text today and perfect your word count!
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

@@ -89,6 +89,74 @@ export default function TextCaseConverterPage() {
           {result || "➡️ Your converted text will appear here"}
         </pre>
       </div>
+      <section>
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
+            🔠 Why You Need a Text Case Converter
+          </h2>
+          <p className="text-lg text-gray-700 mb-8">
+            Are you tired of manually fixing text formatting mistakes? Whether
+            you're dealing with all-caps emails, poorly structured titles, or
+            text copied from inconsistent sources, our **Text Case Converter**
+            is your instant solution. It allows you to transform any block of
+            text into the desired case style with a single click.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                ✨ Key Case Styles Supported
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **UPPERCASE:** Converts all letters to capital letters. (e.g.,
+                  "HELLO WORLD")
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **lowercase:** Converts all letters to small letters. (e.g.,
+                  "hello world")
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Title Case:** Capitalizes the first letter of every word,
+                  perfect for headlines and titles. (e.g., "This Is My New
+                  Article Title")
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                💡 Perfect for Any Task
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Writers & Editors:** Quickly standardize the case across
+                  documents, blog posts, and academic papers.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Programmers:** Ensure variables and constants adhere to
+                  specific coding standards (like screaming snake case).
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Students:** Format assignment titles and headings
+                  professionally without hassle.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p className="text-center text-lg text-green-700 font-medium mt-10">
+            Paste your text now and let the tool handle the formatting
+            instantly!
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

@@ -115,3 +115,5 @@ export function generateToolSEO({
     },
   };
 }
+
+// google-site-verification=bge6Ri7o5Lp7UB3MzP31GoUQNCns5eUEdzMJ5CV4jkQ

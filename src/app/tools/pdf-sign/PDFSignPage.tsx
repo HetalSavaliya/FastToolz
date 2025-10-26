@@ -244,6 +244,56 @@ export default function PDFSignPage() {
       )}
 
       {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
+      <section className="mt-16 pt-8 border-t border-gray-200 text-gray-700">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          The Power of Digital Signatures in PDF Documents
+        </h2>
+        <p className="mb-4">
+          In today's digital workflow, the ability to **digitally sign
+          documents** without printing, signing, and scanning is essential for
+          speed and efficiency. Our PDF Sign Tool provides a simple, secure way
+          to affix a text-based signature or stamp to any page of your PDF file.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Precision Placement for Professional Results
+        </h3>
+        <p className="mb-4">
+          Unlike many basic tools that drop a signature randomly, this utility
+          gives you fine-grained control over where your text is placed. Using
+          **X and Y coordinates** (relative to the bottom-left corner of the
+          page, from 0 to 100), you can precisely position your signature,
+          ensuring it lands perfectly on the required signature line.
+        </p>
+
+        <p className="mb-4">
+          This is particularly useful for formal contracts, approval forms, and
+          legal documents where accurate placement is critical. Simply set the
+          **Page Number** and define the coordinates to achieve a professional,
+          standardized result every time.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+          Understanding Coordinate Systems
+        </h3>
+        <p className="mb-4">
+          The coordinate system used here is relative to the page size, making
+          it intuitive:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
+          <li>**X = 0** is the left edge; **X = 100** is the right edge.</li>
+          <li>**Y = 0** is the bottom edge; **Y = 100** is the top edge.</li>
+          <li>
+            A signature at $(\mathbf{50}, \mathbf{50})$ will appear exactly in
+            the center of the selected page.
+          </li>
+        </ul>
+        <p>
+          This ensures your signature's location remains constant, regardless of
+          the PDF's specific paper size (A4, Letter, etc.), simplifying your
+          signing process.
+        </p>
+      </section>
     </main>
   );
 }

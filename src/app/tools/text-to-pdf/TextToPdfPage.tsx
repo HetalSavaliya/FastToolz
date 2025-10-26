@@ -151,6 +151,81 @@ export default function TextToPdfPage() {
           Reset
         </button>
       </div>
+      <section>
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
+            📄 Convert Plain Text to Professional PDF
+          </h2>
+          <p className="text-lg text-gray-700 mb-8">
+            Creating a PDF from text or a simple `.txt` file is essential for
+            sharing documents that need to maintain their format and appearance
+            across different devices. Our **Text to PDF Converter** takes the
+            headache out of document portability, giving you a clean, standard
+            A4 PDF from your raw text content.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🚀 Why Use the PDF Format?
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Universal Compatibility:** PDFs look the same regardless of
+                  the operating system, device, or software used to view them.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Professional Standard:** PDF is the go-to format for
+                  submitting résumés, academic papers, invoices, and legal
+                  documents.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Print Ready:** The output PDF is formatted on a standard A4
+                  page size, making it perfect for printing without layout
+                  issues.
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                💡 Fast and Simple Workflow
+              </h3>
+              <ol className="space-y-4 text-gray-600 list-decimal pl-5">
+                <li>
+                  **Input Content:** Paste your text directly into the editor or
+                  drag and drop a `.txt` file.
+                </li>
+                <li>
+                  **Review and Edit:** Use the large text area to make any final
+                  adjustments to your content before conversion.
+                </li>
+                <li>
+                  **Generate & Download:** Click **"Download as PDF"** and
+                  receive your finalized PDF document instantly.
+                </li>
+              </ol>
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                <div className="flex justify-center items-center gap-4 text-green-600 text-3xl">
+                  ⌨️ ➡️ 📄
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Convert your raw keyboard input (⌨️) into a portable PDF (📄)
+                  for easy sharing.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-lg text-green-700 font-medium mt-10">
+            Stop worrying about formatting! Get your content into a clean PDF
+            ready for the world.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

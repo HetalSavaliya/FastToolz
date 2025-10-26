@@ -4,38 +4,48 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-// 🔧 Add more tools as needed
-const navLinks = [{ name: "All Tools", path: "/" }];
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "All Tools", path: "/tools" },
+  { name: "About", path: "/about" },
+  { name: "Contact", path: "/contact" },
+];
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
   return (
-    <header className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 text-white sticky top-0 z-50 shadow-md">
-      <div className=" mx-auto px-4 py-4 flex justify-between items-center">
+    <header className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white sticky top-0 z-50 shadow-lg">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* 🔰 Logo & Title */}
-        <Link href="/" className="flex items-center space-x-3">
+        <Link href="/" className="flex items-center space-x-3 group">
           <Image
             src="/logo.svg"
             alt="Tools Logo"
             width={40}
             height={40}
-            className="rounded-full border border-white"
+            className="rounded-full border border-white shadow-md transition-transform duration-300 group-hover:rotate-6"
           />
-          <span className="text-xl font-bold tracking-tight">HJ Tools Hub</span>
+          <span className="text-2xl font-semibold tracking-tight group-hover:text-yellow-200 transition">
+            HJ Tools Hub
+          </span>
         </Link>
 
         {/* 💻 Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex space-x-8 text-sm font-medium">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}
-              className={`hover:underline transition ${
-                pathname === link.path ? "font-bold underline" : ""
-              }`}
+              className={`relative transition-all duration-200 ${
+                pathname === link.path
+                  ? "font-bold text-yellow-300 after:scale-x-100"
+                  : "hover:text-yellow-200 after:scale-x-0"
+              } after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-full after:h-[2px] after:bg-yellow-300 after:transition-transform after:origin-left after:duration-300 hover:after:scale-x-100`}
             >
               {link.name}
             </Link>
@@ -48,43 +58,21 @@ export default function Header() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle navigation"
         >
-          <svg
-            className="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {mobileOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
+          <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars} size="lg" />
         </button>
       </div>
 
       {/* 📱 Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden px-4 pb-4 bg-white text-gray-800 border-t">
+        <div className="md:hidden bg-white text-gray-800 border-t shadow-inner animate-slideDown">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}
               onClick={() => setMobileOpen(false)}
-              className={`block py-2 text-sm ${
+              className={`block px-6 py-3 text-sm border-b hover:bg-gray-50 transition ${
                 pathname === link.path ? "text-blue-600 font-semibold" : ""
-              } hover:text-blue-500 transition`}
+              }`}
             >
               {link.name}
             </Link>

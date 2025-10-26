@@ -206,6 +206,82 @@ export default function PDFUnlockPage() {
 
       {/* Error Message */}
       {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
+      <section>
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
+            🔓 PDF Unlocker: Regain Access to Your Documents
+          </h2>
+          <p className="text-lg text-gray-700 mb-8">
+            Password-protected PDFs are great for security, but they can become
+            restrictive when you need to share or edit them freely. Our **PDF
+            Unlock** tool allows you to permanently remove the password
+            protection from your documents, giving you full access once you
+            provide the correct, original password.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🔑 Key Benefits of Unlocking
+              </h3>
+              <ul className="space-y-4 text-gray-600 list-none pl-0">
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Seamless Sharing:** Share the document with colleagues or
+                  friends without needing to send the password separately every
+                  time.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Full Functionality:** Enable printing, copying, and editing
+                  features that may have been restricted by the protection
+                  settings.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 font-bold mr-3">•</span>
+                  **Permanent Solution:** Once unlocked, the document stays
+                  open, ready for use or archival without future password
+                  prompts.
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
+                🔑 How It Works (Securely)
+              </h3>
+              <ol className="space-y-4 text-gray-600 list-decimal pl-5">
+                <li>**Upload:** Upload your password-protected PDF file.</li>
+                <li>
+                  **Authenticate:** Enter the **original password** into the
+                  input field. This is the only way to decrypt the file.
+                </li>
+                <li>
+                  **Process:** The tool securely uses your password to remove
+                  the encryption.
+                </li>
+                <li>
+                  **Download:** Your unlocked PDF file is generated, ready for
+                  immediate download and future use.
+                </li>
+              </ol>
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                <div className="flex justify-center items-center gap-4 text-green-600 text-3xl">
+                  🔒 ➡️ 🔓
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Convert a restricted file (🔒) into an unrestricted one (🔓)
+                  with the correct password.
+                </p>
+              </div>
+            </div>
+          </div>
+          <p className="text-center text-lg text-green-700 font-medium mt-10">
+            Stop fighting with locked files. Upload your PDF, enter the key, and
+            enjoy unrestricted access today!
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

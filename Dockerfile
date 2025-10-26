@@ -25,7 +25,7 @@ RUN apt-get update && \
     ffmpeg python3 python3-pip python3-venv \
     libreoffice libreoffice-writer qpdf && \
     python3 -m venv /opt/venv && \
-    /opt/venv/bin/pip install --no-cache-dir pdf2docx && \
+    /opt/venv/bin/pip install --no-cache-dir pdf2docx gpt4all && \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/opt/venv/bin:$PATH"
