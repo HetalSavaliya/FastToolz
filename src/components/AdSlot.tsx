@@ -35,6 +35,7 @@ export default function AdSlot({ adClient, adSlot, style }: AdSlotProps) {
       data-ad-client={adClient}
       data-ad-slot={adSlot}
       data-ad-format="auto"
+      data-adtest="on"
       data-full-width-responsive="true"
     ></ins>
   );
