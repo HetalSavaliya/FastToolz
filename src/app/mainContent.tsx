@@ -10,14 +10,21 @@ import { categories } from "@/data/categories";
 export default function MainContentPage() {
   const [search, setSearch] = useState("");
 
+  // Filter tools only if search is not empty
   const filteredCategories = categories.map((category) => ({
     ...category,
-    tools: category.tools.filter(
-      (tool) =>
-        tool.name.toLowerCase().includes(search.toLowerCase()) ||
-        tool.description.toLowerCase().includes(search.toLowerCase())
-    ),
+    tools:
+      search.trim() === ""
+        ? category.tools
+        : category.tools.filter(
+            (tool) =>
+              tool.name.toLowerCase().includes(search.toLowerCase()) ||
+              tool.description.toLowerCase().includes(search.toLowerCase())
+          ),
   }));
+
+  // Check if there are any tools after filtering
+  const hasResults = filteredCategories.some((cat) => cat.tools.length > 0);
 
   return (
     <motion.main
@@ -43,68 +50,72 @@ export default function MainContentPage() {
       </motion.div>
 
       {/* 🧰 Tools Categories */}
-      {filteredCategories.map(
-        (category) =>
-          category.tools.length > 0 && (
-            <motion.section
-              key={category.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="mb-20"
-            >
-              <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-10 border-b-4 border-green-400 inline-block pb-2">
-                {category.title}
-              </h2>
-
-              {/* Grid of Tools */}
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
+      {hasResults ? (
+        filteredCategories.map(
+          (category) =>
+            category.tools.length > 0 && (
+              <motion.section
+                key={category.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                variants={{
-                  hidden: {},
-                  visible: {
-                    transition: { staggerChildren: 0.1 },
-                  },
-                }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                transition={{ duration: 0.6 }}
+                className="mb-20"
               >
-                {category.tools.map((tool) => (
-                  <motion.div
-                    key={tool.name}
-                    variants={{
-                      hidden: { opacity: 0, y: 40, scale: 0.95 },
-                      visible: { opacity: 1, y: 0, scale: 1 },
-                    }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                  >
-                    <Link
-                      href={tool.path}
-                      className="block bg-white rounded-2xl border border-gray-200 shadow hover:shadow-2xl hover:border-green-300 hover:-translate-y-1 transform transition-all duration-300 p-6 group"
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-10 border-b-4 border-green-400 inline-block pb-2">
+                  {category.title}
+                </h2>
+
+                {/* Grid of Tools */}
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.1 } },
+                  }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  {category.tools.map((tool) => (
+                    <motion.div
+                      key={tool.name}
+                      variants={{
+                        hidden: { opacity: 0, y: 40, scale: 0.95 },
+                        visible: { opacity: 1, y: 0, scale: 1 },
+                      }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
                     >
-                      <div className="flex items-start gap-5">
-                        <div className="flex-shrink-0">
-                          <div className="w-14 h-14 flex items-center justify-center bg-green-100 text-green-600 rounded-full text-2xl group-hover:scale-110 transition-transform duration-300 shadow-inner">
-                            <FontAwesomeIcon icon={tool.icon} />
+                      <Link
+                        href={tool.path}
+                        className="block bg-white rounded-2xl border border-gray-200 shadow hover:shadow-2xl hover:border-green-300 hover:-translate-y-1 transform transition-all duration-300 p-6 group"
+                      >
+                        <div className="flex items-start gap-5">
+                          <div className="flex-shrink-0">
+                            <div className="w-14 h-14 flex items-center justify-center bg-green-100 text-green-600 rounded-full text-2xl group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                              <FontAwesomeIcon icon={tool.icon} />
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">
+                              {tool.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {tool.description}
+                            </p>
                           </div>
                         </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">
-                            {tool.name}
-                          </h3>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {tool.description}
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.section>
-          )
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.section>
+            )
+        )
+      ) : (
+        <p className="text-center text-gray-500 mt-20">
+          😕 No tools found for "{search}"
+        </p>
       )}
 
       {/* 📢 Side Ad (Large Screens) */}
