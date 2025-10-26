@@ -1,4 +1,3 @@
-// src/app/tools/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
@@ -47,7 +46,9 @@ export default function ToolsLayout({
         className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-gray-900 flex flex-col min-h-screen`}
       >
         <Header />
-        <main className="flex-grow w-full mx-auto px-6 py-10">{children}</main>
+        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
