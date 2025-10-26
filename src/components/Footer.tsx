@@ -1,13 +1,14 @@
+// src/components/Footer.tsx
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebookF,
-  faTwitter,
-  faGithub,
-} from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFacebook,
+  faGithub,
+  faTwitter,
+} from "@fortawesome/free-brands-svg-icons";
 
-export default function ToolsFooter() {
+export default function Footer() {
   return (
     <footer className="bg-gradient-to-r from-gray-100 via-white to-gray-100 border-t text-gray-700 mt-10 shadow-inner">
       <div className="max-w-6xl mx-auto px-6 py-8 text-center space-y-5">
@@ -35,15 +36,13 @@ export default function ToolsFooter() {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-600 transition-transform hover:scale-110"
           >
-            <FontAwesomeIcon icon={faFacebookF} size="lg" />
+            <FontAwesomeIcon icon={faFacebook} size="lg" />
           </a>
           <a
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-sky-500 transition-transform hover:scale-110"
           >
             <FontAwesomeIcon icon={faTwitter} size="lg" />
           </a>
@@ -51,22 +50,23 @@ export default function ToolsFooter() {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-gray-800 transition-transform hover:scale-110"
           >
             <FontAwesomeIcon icon={faGithub} size="lg" />
           </a>
-          <a
-            href="mailto:support@hjtools.com"
-            className="hover:text-red-500 transition-transform hover:scale-110"
-          >
+          <a href="mailto:support@hjtools.com">
             <FontAwesomeIcon icon={faEnvelope} size="lg" />
           </a>
         </div>
 
-        {/* 🧾 Copyright */}
         <p className="text-sm text-gray-500">
           &copy; {new Date().getFullYear()}{" "}
-          <span className="font-semibold">HJ Tools</span>. All rights reserved.
+          <span className="font-semibold">HJ Tools Hub</span>. All rights
+          reserved.
+        </p>
+
+        <p className="text-xs text-gray-400">
+          Powered by <span className="font-medium">HJ Tools</span> | Designed
+          for Everyone
         </p>
       </div>
     </footer>

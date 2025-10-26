@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { motion } from "framer-motion";
 import AdSlot from "@/components/AdSlot";
-
 import { categories } from "@/data/categories";
 
 export default function MainContentPage() {
@@ -21,73 +20,95 @@ export default function MainContentPage() {
   }));
 
   return (
-    <main className="px-6 py-10 max-w-6xl mx-auto">
-      {/* Top ad */}
-      {/* <div className="mb-8">
-        <AdSlot adClient="ca-pub-8822732191267343" adSlot="7404255757" />
-      </div> */}
-      {/* Page Title */}
-      <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-        🚀 Explore Free Online Tools
-      </h1>
-      <div className="text-center text-gray-600 mb-8">
-        <p>100% free browser-based tools</p>
-        <p>
-          Lightweight browser tools for PDFs, images, videos, and more — no
-          login required!
-        </p>
-      </div>
-
-      {/* Search Input */}
-      <div className="mb-10 flex justify-center">
+    <motion.main
+      className="px-6 py-12 max-w-6xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      {/* 🔍 Search Bar */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="flex justify-center mb-12"
+      >
         <input
           type="text"
-          placeholder="🔍 Search tools..."
+          placeholder="🔍 Search for a tool..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-2/3 lg:w-1/2 px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-[#66AF85] focus:outline-none"
+          className="w-full sm:w-2/3 lg:w-1/2 px-5 py-3 border border-gray-300 rounded-2xl shadow-sm focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all text-gray-700"
         />
-      </div>
+      </motion.div>
 
-      {/* Categories */}
+      {/* 🧰 Tools Categories */}
       {filteredCategories.map(
         (category) =>
           category.tools.length > 0 && (
-            <section key={category.title} className="mb-12">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+            <motion.section
+              key={category.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="mb-16"
+            >
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-8 border-b-4 border-green-400 inline-block pb-2">
                 {category.title}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              {/* Grid of Tools */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: { staggerChildren: 0.1 },
+                  },
+                }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
                 {category.tools.map((tool) => (
-                  <Link
+                  <motion.div
                     key={tool.name}
-                    href={tool.path}
-                    className="bg-white border border-gray-200 rounded-xl shadow hover:shadow-xl hover:bg-gradient-to-br hover:from-[#f0fdf4] hover:to-[#ecfdf5] transition-all duration-200 p-6 group"
+                    variants={{
+                      hidden: { opacity: 0, y: 40, scale: 0.95 },
+                      visible: { opacity: 1, y: 0, scale: 1 },
+                    }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 flex items-center justify-center bg-[#66AF85]/10 text-[#66AF85] rounded-full text-xl group-hover:scale-110 transition-transform duration-200">
-                          <FontAwesomeIcon icon={tool.icon} />
+                    <Link
+                      href={tool.path}
+                      className="block bg-white rounded-2xl border border-gray-200 shadow hover:shadow-2xl hover:border-green-300 hover:-translate-y-1 transform transition-all duration-300 p-6 group"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="w-14 h-14 flex items-center justify-center bg-green-100 text-green-600 rounded-full text-2xl group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                            <FontAwesomeIcon icon={tool.icon} />
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">
+                            {tool.name}
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {tool.description}
+                          </p>
                         </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-[#66AF85]">
-                          {tool.name}
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {tool.description}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </motion.div>
                 ))}
-              </div>
-            </section>
+              </motion.div>
+            </motion.section>
           )
       )}
 
-      {/* Side ad (for large screens) */}
-      <div className="hidden lg:block fixed right-0 top-32 w-72">
+      {/* 📢 Side Ad (Large Screens) */}
+      <div className="hidden lg:block fixed right-6 top-40 w-72">
         <AdSlot
           adClient="ca-pub-8822732191267343"
           adSlot="2856658891"
@@ -95,10 +116,10 @@ export default function MainContentPage() {
         />
       </div>
 
-      {/* Bottom Ad Slot */}
-      <div className="my-8">
+      {/* 📦 Bottom Ad Slot */}
+      <div className="mt-16">
         <AdSlot adClient="ca-pub-8822732191267343" adSlot="1234567890" />
       </div>
-    </main>
+    </motion.main>
   );
 }
