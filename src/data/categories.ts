@@ -122,12 +122,12 @@ export const categories = [
     {
         title: "📝 Text & Utility Tools",
         tools: [
-            {
-                name: "Online Notepad",
-                description: "Write, edit, and autosave notes in your browser.",
-                path: "/tools/online-notepad",
-                icon: faFileLines,
-            },
+            // {
+            //     name: "Online Notepad",
+            //     description: "Write, edit, and autosave notes in your browser.",
+            //     path: "/tools/online-notepad",
+            //     icon: faFileLines,
+            // },
             {
                 name: "Text Case Converter",
                 description: "Convert text to UPPERCASE, lowercase, Title Case, etc.",
