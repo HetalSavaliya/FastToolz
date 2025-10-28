@@ -5,12 +5,14 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
-  faUpload,
+  faFilePdf,
   faRotateLeft,
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";
+import { motion } from "framer-motion";
+import UploadArea from "@/components/UploadArea";
 
 export default function PdfSplitterPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -53,7 +55,6 @@ export default function PdfSplitterPage() {
       const pdfBytes = await pdfFile.arrayBuffer();
       const sourcePdf = await PDFDocument.load(pdfBytes);
 
-      // Parse all ranges
       const { parsedRanges, usedPages } = parseMultipleRanges(
         pageRanges,
         totalPages
@@ -78,7 +79,6 @@ export default function PdfSplitterPage() {
         }
 
         const newPdfBytes = await newPdf.save();
-
         const blob = new Blob([new Uint8Array(newPdfBytes)], {
           type: "application/pdf",
         });
@@ -169,111 +169,101 @@ export default function PdfSplitterPage() {
   };
 
   return (
-    <main className="w-full px-4 py-6">
+    <main className="w-full max-w-4xl mx-auto text-[var(--foreground)] transition-colors duration-500 min-h-screen px-4 py-8">
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
           ✂️ PDF Splitter
         </h1>
-        <p className="text-gray-600">
+        <p className="mt-2 opacity-90">
           Upload a PDF, enter page ranges like{" "}
-          <code className="bg-gray-100 px-1 mx-1 rounded">1-3,5-10</code>, and
-          the rest of the pages will be auto-split.
+          <code className="bg-[var(--card)] px-1 mx-1 rounded text-[var(--card-text)]">
+            1-3,5-10
+          </code>{" "}
+          and the rest of the pages will be auto-split.
         </p>
       </div>
 
-      {/* Upload Area */}
-      <div
+      {/* ✨ Enhanced Upload Section */}
+      <UploadArea
+        title="Drag & drop your PDFs here"
+        subtitle="or click to browse — supports single files"
+        icon={faFilePdf}
+        accept="application/pdf"
+        multiple={false}
+        onFileChange={(file) => handleFileChange(file as File)}
         onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center cursor-pointer bg-white hover:bg-gray-50 transition mb-6"
-      >
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="application/pdf"
-            hidden
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileChange(file);
-            }}
-          />
-          <div className="text-gray-600">
-            <FontAwesomeIcon icon={faUpload} className="text-2xl mb-2" />
-            <p className="text-sm font-medium">
-              Click to upload or drag a PDF here
-            </p>
-          </div>
-        </label>
-      </div>
+      />
 
-      {/* Split Controls */}
+      {/* 🔽 Split Controls */}
       {pdfFile && (
-        <div className="mb-6">
-          <h3 className="font-semibold text-gray-700 mb-2">📄 Enter Ranges</h3>
+        <div className="mb-6 mt-6">
+          <h3 className="font-semibold text-[var(--foreground)] mb-2">
+            📄 Enter Ranges
+          </h3>
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            <label className="flex flex-col text-sm">
+            <label className="flex flex-col text-sm text-[var(--foreground)]">
               Page Ranges (e.g. 1-3,5-10)
               <input
                 type="text"
                 value={pageRanges}
                 onChange={(e) => setPageRanges(e.target.value)}
-                className="border rounded px-3 py-2 mt-1 w-64"
+                className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 mt-1 w-64"
               />
             </label>
 
             <button
               onClick={handleSplit}
               disabled={loading}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
+              className="bg-[var(--accent)] text-white px-4 py-2 rounded hover:bg-[var(--accent-hover)] disabled:opacity-50"
             >
               {loading ? "Splitting..." : "Split PDF"}
             </button>
 
             <button
               onClick={handleReset}
-              className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              className="border border-[var(--border)] px-4 py-2 rounded text-[var(--foreground)] hover:bg-[var(--border)]/20 flex items-center gap-2"
             >
               <FontAwesomeIcon icon={faRotateLeft} />
               Reset
             </button>
           </div>
           {totalPages !== null && (
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm opacity-80 mt-2">
               Total Pages in PDF: <strong>{totalPages}</strong>
             </p>
           )}
         </div>
       )}
 
-      {/* Split Cards */}
+      {/* 📄 Split Results */}
       {splitParts.length > 0 && (
-        <div ref={resultRef} className="mt-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+        <div ref={resultRef} className="mt-8">
+          <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
             🧾 Split Results
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {splitParts.map((part) => (
               <div
                 key={part.partNumber}
-                className="border rounded-lg p-4 bg-white shadow-sm"
+                className="border border-[var(--border)] rounded-xl p-4 bg-[var(--card)] shadow-sm hover:shadow-md transition-all"
               >
-                <h3 className="font-semibold text-gray-700 mb-2">
+                <h3 className="font-semibold text-[var(--card-text)] mb-2">
                   📄 Part {part.partNumber}
                 </h3>
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm opacity-80 mb-3">
                   Pages: {part.pages.join(", ")}
                 </p>
                 <button
                   onClick={() => handleDownload(part.partNumber, part.blob)}
-                  className="bg-[#66AF85] text-white px-3 py-2 rounded hover:bg-[#589c71] text-sm flex items-center gap-2"
+                  className="bg-[var(--accent)] text-white px-3 py-2 rounded hover:bg-[var(--accent-hover)] text-sm flex items-center gap-2"
                 >
                   <FontAwesomeIcon icon={faDownload} />
                   Download Part {part.partNumber}
@@ -283,74 +273,87 @@ export default function PdfSplitterPage() {
           </div>
         </div>
       )}
-      {/* -------------------------------------------------------- */}
-      {/* 📚 RICH CONTENT SECTION */}
-      {/* -------------------------------------------------------- */}
-      <section className="mt-16 pt-8 border-t border-gray-200 text-gray-700">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          Why Use a PDF Splitter?
-        </h2>
-        <p className="mb-4">
-          Splitting a PDF is one of the most common and powerful document
-          management tasks. It allows you to transform a single, monolithic
-          file—such as a large annual report, a compiled user manual, or a
-          single scan of multiple agreements—into smaller, focused documents.
-          This is essential for organization and collaboration.
+
+      <section className="mt-16 pt-8 border-t border-[var(--border)] text-[var(--foreground)] transition-colors duration-500">
+        <h2 className="text-3xl font-bold mb-4">Why Use a PDF Splitter?</h2>
+        <p className="mb-4 opacity-90">
+          Splitting a PDF is one of the most useful and practical document
+          management tasks. It allows you to transform a single, large file —
+          such as an annual report, combined contracts, or scanned forms — into
+          smaller, focused documents. This helps improve organization,
+          collaboration, and sharing.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+        <h3 className="text-xl font-semibold mb-3 mt-6">
           Key Features and Benefits
         </h3>
-        <ul className="list-disc list-inside space-y-3 mb-6 ml-4">
+        <ul className="list-disc list-inside space-y-3 mb-6 ml-4 opacity-90">
           <li>
-            **Granular Control:** Specify exact page ranges (e.g., **1-5** for
-            Chapter 1, **10-12** for the Appendix). This precision ensures each
-            new file contains only the required content.
+            <span className="font-semibold text-[var(--foreground)]">
+              Granular Control:
+            </span>{" "}
+            Specify exact page ranges (e.g.,{" "}
+            <code className="bg-[var(--card)] px-1 rounded text-[var(--foreground)]">
+              1-5
+            </code>{" "}
+            for Chapter 1,{" "}
+            <code className="bg-[var(--card)] px-1 rounded text-[var(--foreground)]">
+              10-12
+            </code>{" "}
+            for the Appendix). Each file contains only the content you need.
           </li>
           <li>
-            **Automatic Cleanup:** Our tool handles the non-specified pages
-            automatically. If you define{" "}
-            <code className="bg-gray-100 px-1 rounded text-gray-800">1-5</code>{" "}
-            in a 10-page document, pages 6 through 10 will be grouped into a
-            final "remainder" part, ensuring no content is lost.
+            <span className="font-semibold text-[var(--foreground)]">
+              Automatic Cleanup:
+            </span>{" "}
+            The tool intelligently handles pages outside your defined ranges. If
+            you extract{" "}
+            <code className="bg-[var(--card)] px-1 rounded text-[var(--foreground)]">
+              1-5
+            </code>{" "}
+            from a 10-page file, pages 6–10 become a separate “remainder” file.
           </li>
           <li>
-            **Easier Sharing:** Small files are faster to email and upload,
-            making it easier to share only the relevant sections with colleagues
-            or clients.
+            <span className="font-semibold text-[var(--foreground)]">
+              Easier Sharing:
+            </span>{" "}
+            Smaller PDFs are faster to email or upload — perfect for sending
+            only relevant pages.
           </li>
           <li>
-            **File Management:** Breaking a large PDF into smaller components
-            simplifies indexing and archiving in document management systems.
+            <span className="font-semibold text-[var(--foreground)]">
+              Better File Management:
+            </span>{" "}
+            Dividing large PDFs simplifies storage, indexing, and retrieval
+            within document systems.
           </li>
         </ul>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
+        <h3 className="text-xl font-semibold mb-3 mt-6">
           How to Define Your Ranges
         </h3>
-        <p>
-          The range input field accepts a comma-separated list of page numbers
-          and ranges. Remember these simple rules:
+        <p className="opacity-90">
+          The range input accepts a comma-separated list of page numbers and
+          ranges. Here’s how it works:
         </p>
-        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mt-3">
-          <p className="font-mono text-sm mb-2">
-            <code className="bg-gray-200 px-1 rounded text-gray-800">
+        <div className="p-4 bg-[var(--card)] border border-[var(--border)] rounded-xl mt-3 space-y-2">
+          <p className="font-mono text-sm">
+            <code className="bg-[var(--border)] px-1 rounded text-[var(--foreground)]">
               1, 5, 10
-            </code>
-            : Creates three separate files, each containing a single page.
-          </p>
-          <p className="font-mono text-sm mb-2">
-            <code className="bg-gray-200 px-1 rounded text-gray-800">
-              2-4, 7-9
-            </code>
-            : Creates a file with pages 2, 3, and 4, and another file with pages
-            7, 8, and 9.
+            </code>{" "}
+            — Creates three separate files, each containing a single page.
           </p>
           <p className="font-mono text-sm">
-            <code className="bg-gray-200 px-1 rounded text-gray-800">
+            <code className="bg-[var(--border)] px-1 rounded text-[var(--foreground)]">
+              2-4, 7-9
+            </code>{" "}
+            — Creates one file with pages 2–4, and another with pages 7–9.
+          </p>
+          <p className="font-mono text-sm">
+            <code className="bg-[var(--border)] px-1 rounded text-[var(--foreground)]">
               1-1, 1-1
-            </code>
-            : Invalid, as pages cannot be duplicated in the output ranges.
+            </code>{" "}
+            — Invalid: Pages cannot be duplicated in output ranges.
           </p>
         </div>
       </section>

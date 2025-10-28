@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +12,8 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import UploadArea from "@/components/UploadArea";
 
 export default function PdfMergePage() {
   const [files, setFiles] = useState<{ file: File; locked?: boolean }[]>([]);
@@ -19,38 +21,18 @@ export default function PdfMergePage() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ✅ Handle File Selection
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(e.target.files || []);
-    await addFiles(selected);
-    setDownloadUrl(null);
-  };
-
-  // ✅ Handle Drag & Drop
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const droppedFiles = Array.from(e.dataTransfer.files).filter(
-      (file) => file.type === "application/pdf"
-    );
-    await addFiles(droppedFiles);
-    setDownloadUrl(null);
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) =>
-    e.preventDefault();
-
-  // ✅ Detect if a PDF is password-protected or corrupted
+  // ✅ Detect locked/corrupted PDFs
   const detectLockedPdf = async (file: File): Promise<boolean> => {
     try {
       const buffer = await file.arrayBuffer();
       await PDFDocument.load(buffer, { ignoreEncryption: true });
-      return false; // Not locked
+      return false;
     } catch {
-      return true; // Locked or invalid
+      return true;
     }
   };
 
-  // ✅ Add and check files
+  // ✅ Add files
   const addFiles = async (selectedFiles: File[]) => {
     const checkedFiles = await Promise.all(
       selectedFiles.map(async (file) => ({
@@ -61,14 +43,30 @@ export default function PdfMergePage() {
     setFiles((prev) => [...prev, ...checkedFiles]);
   };
 
-  // ✅ Remove file from list
+  // ✅ File selection
+  const handleFileChange = async (file: FileList) => {
+    const selected = Array.from(file || []);
+    await addFiles(selected);
+    setDownloadUrl(null);
+  };
+
+  // ✅ Drag & Drop handlers
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files).filter(
+      (file) => file.type === "application/pdf"
+    );
+    await addFiles(droppedFiles);
+    setDownloadUrl(null);
+  };
+
+  // ✅ Remove & Reset
   const removeFile = (index: number) => {
     const updated = [...files];
     updated.splice(index, 1);
     setFiles(updated);
   };
 
-  // ✅ Reset all files
   const resetFiles = () => {
     setFiles([]);
     setDownloadUrl(null);
@@ -78,7 +76,6 @@ export default function PdfMergePage() {
   // ✅ Merge PDFs
   const mergePDFs = async () => {
     const validFiles = files.filter((f) => !f.locked).map((f) => f.file);
-
     if (validFiles.length < 2) {
       alert("Please select at least two unlocked PDF files to merge.");
       return;
@@ -111,7 +108,6 @@ export default function PdfMergePage() {
       }
 
       const mergedPdfBytes = await mergedPdf.save();
-      // mergedPdfBytes is a Uint8Array; use it directly to construct the Blob
       const blob = new Blob([new Uint8Array(mergedPdfBytes)], {
         type: "application/pdf",
       });
@@ -126,65 +122,71 @@ export default function PdfMergePage() {
   };
 
   return (
-    <main className="w-full px-4 py-6 max-w-4xl mx-auto">
+    <main className="w-full max-w-4xl mx-auto text-[var(--foreground)] transition-colors duration-500 min-h-screen px-4 py-8">
       {/* 🔙 Back Button */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
       {/* Title & Description */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-          <FontAwesomeIcon icon={faFilePdf} className="text-[#66AF85]" />
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
+          <FontAwesomeIcon icon={faFilePdf} className="text-[var(--accent)]" />
           Merge PDF Files
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="mt-2 opacity-90">
           Combine multiple PDF files into one — secure, free, and processed
           fully in your browser.
         </p>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm opacity-70 mt-2">
           ⚠️ Password-protected or corrupted PDFs will be skipped automatically.
         </p>
       </div>
 
-      {/* Upload Area */}
-      <div
-        className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#66AF85] transition mb-4"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <input
-          type="file"
-          accept="application/pdf"
-          multiple
-          onChange={handleFileChange}
-          ref={fileInputRef}
-          hidden
-        />
-        <p className="text-gray-500">
-          📂 Drag & drop your PDF files here or click to select.
-        </p>
-      </div>
+      {/* ✨ Upload Area (modern glassmorphism + glow) */}
 
-      {/* File List */}
+      <UploadArea
+        title="Drag & drop your PDFs here"
+        subtitle="or click to browse — supports multiple files"
+        icon={faFilePdf}
+        accept="application/pdf"
+        multiple={true}
+        onFileChange={(file) => handleFileChange(file as FileList)}
+        onDrop={handleDrop}
+      />
+
+      {/* 🗂️ File List Section */}
       {files.length > 0 && (
-        <div className="mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold mb-3">Files to Merge:</h2>
-          <ul className="space-y-2 text-sm text-gray-700">
+        <motion.div
+          className="mt-8 mb-6 p-5  bg-[var(--card)]/90 border border-[var(--border)] rounded-2xl shadow-md backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FontAwesomeIcon
+              icon={faFilePdf}
+              className="text-[var(--accent)]"
+            />
+            Files to Merge:
+          </h2>
+
+          <ul className="space-y-2 text-sm">
             {files.map(({ file, locked }, idx) => (
-              <li
+              <motion.li
                 key={idx}
-                className="flex items-center justify-between bg-gray-100 p-2 rounded"
+                className="flex items-center justify-between bg-[var(--background)]/40 border border-[var(--border)] p-3 rounded-lg hover:border-[var(--accent)] transition-all"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
               >
                 <span className="flex items-center gap-2">
                   {file.name}
                   {locked && (
-                    <span className="text-red-500 flex items-center gap-1">
+                    <span className="text-red-400 flex items-center gap-1">
                       <FontAwesomeIcon icon={faLock} />
                       Locked
                     </span>
@@ -192,77 +194,77 @@ export default function PdfMergePage() {
                 </span>
                 <button
                   onClick={() => removeFile(idx)}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-400 hover:text-red-500"
                   title="Remove"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
-              </li>
+              </motion.li>
             ))}
           </ul>
 
-          <div className="mt-4 flex gap-4">
+          {/* Buttons */}
+          <div className="mt-6 flex flex-wrap gap-4 justify-center">
             <button
               onClick={mergePDFs}
               disabled={merging || files.filter((f) => !f.locked).length < 2}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#58a277] disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[var(--accent)] text-white font-medium
+        hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             >
+              <FontAwesomeIcon icon={faFilePdf} />
               {merging ? "Merging..." : "Merge PDFs"}
             </button>
+
             <button
               onClick={resetFiles}
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
+              className="flex items-center gap-2 px-6 py-2 rounded-lg border border-[var(--border)]
+        text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all"
             >
-              <FontAwesomeIcon icon={faRotateLeft} className="mr-2" />
+              <FontAwesomeIcon icon={faRotateLeft} />
               Reset
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Download Section */}
+      {/* ✅ Download Section */}
       {downloadUrl && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg shadow-md text-center">
-          <p className="text-lg font-medium text-green-700 mb-2">
-            ✅ Merging complete! Your files are ready.
+        <motion.div
+          className="mt-8 p-6 border border-[var(--accent)] rounded-xl text-center bg-[var(--card)]/90 shadow-lg backdrop-blur-sm"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <p className="text-lg font-medium text-[var(--accent)] mb-3">
+            🎉 Merge Complete! Your file is ready to download.
           </p>
           <a
             href={downloadUrl}
-            download="merged_hjtools.pdf"
-            className="inline-flex items-center bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+            download="merged_xorotools.pdf"
+            className="inline-flex items-center gap-2 border border-[var(--accent)] text-white px-6 py-2 rounded-lg font-semibold  transition-all shadow-md hover:shadow-[0_0_15px_var(--accent)]"
           >
-            <FontAwesomeIcon icon={faDownload} className="mr-2" />
-            Download Merged PDF
+            <FontAwesomeIcon icon={faDownload} />
+            Download PDF
           </a>
-        </div>
+        </motion.div>
       )}
 
-      {/* SEO Content */}
-      <section className="rich-content text-gray-700 mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      {/* SEO Section */}
+      <section className="mt-12 pt-8 border-t border-[var(--border)] opacity-90">
+        <h2 className="text-2xl font-bold mb-4">
           The Easiest Way to Combine PDF Files Online
         </h2>
         <p className="mb-4">
-          Our **PDF Merge** tool lets you quickly compile multiple documents
-          into one — no installations, no uploads, and no privacy risk. All
-          processing happens locally in your browser.
+          Our <strong>PDF Merge</strong> tool lets you compile multiple
+          documents into one — no uploads, no tracking, 100% browser-based.
         </p>
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Key Features of the HJ Tools PDF Merger
+        <h3 className="text-xl font-semibold mb-3 mt-6">
+          Key Features of the Toolzy PDF Merger
         </h3>
         <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-          <li>Client-side only processing for complete privacy.</li>
-          <li>High-quality output with original formatting preserved.</li>
-          <li>Completely free, secure, and unlimited usage.</li>
+          <li>All processing is local — files never leave your device.</li>
+          <li>High-quality merged output with original layout preserved.</li>
+          <li>Free, secure, and unlimited use.</li>
         </ul>
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          How to Use the Tool
-        </h3>
-        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
-          <li>Select or drag your PDF files into the upload area.</li>
-          <li>Check that your files appear correctly and aren’t locked.</li>
-          <li>Click “Merge PDFs” to generate and download your merged file.</li>
-        </ol>
       </section>
     </main>
   );

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Script from "next/script";
-import AdSlot from "@/components/AdSlot";
 
 export default function ToolsLayout({
   children,
@@ -10,28 +9,23 @@ export default function ToolsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
-      {/* Google AdSense script */}
+    <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500">
+      {/* Google AdSense Script */}
       <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
         crossOrigin="anonymous"
       />
 
-      {/* Page content with animation */}
+      {/* Animated Page Content */}
       <motion.main
-        className="flex-grow w-full mx-auto px-6 py-10"
-        initial={{ opacity: 0, y: 15 }}
+        className="flex-grow w-full max-w-5xl mx-auto p-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-md transition-colors duration-500"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         {children}
       </motion.main>
-
-      {/* Optional bottom ad */}
-      <div className="mt-16">
-        <AdSlot adClient="ca-pub-8822732191267343" adSlot="1234567890" />
-      </div>
     </div>
   );
 }

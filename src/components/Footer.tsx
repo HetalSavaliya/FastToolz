@@ -1,5 +1,7 @@
-// src/components/Footer.tsx
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -7,66 +9,63 @@ import {
   faGithub,
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
+import FloatingIcons from "@/components/FloatingIcons"; // ✅ Import
 
 export default function Footer() {
+  useEffect(() => {
+    fetch("https://api.countapi.xyz/hit/xorotools.com/visits")
+      .then((res) => res.json())
+      .then((data) => {
+        const el = document.getElementById("visitor-count");
+        if (el) el.textContent = data.value;
+      })
+      .catch(() => {
+        const el = document.getElementById("visitor-count");
+        if (el) el.textContent = "100+";
+      });
+  }, []);
+
   return (
-    <footer className="bg-gradient-to-r from-gray-100 via-white to-gray-100 border-t text-gray-700 mt-10 shadow-inner">
-      <div className="max-w-6xl mx-auto px-6 py-8 text-center space-y-5">
-        {/* 🔗 Footer Links */}
-        <div className="space-x-5 text-sm">
-          <Link
-            href="/privacy-policy"
-            className="hover:text-blue-600 transition"
-          >
+    <footer className="relative border-t border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] mt-10 py-10 text-center overflow-hidden">
+      {/* ✨ Floating Icons (Optional background animation) */}
+      <FloatingIcons
+        icons={[faFacebook, faTwitter, faGithub, faEnvelope]}
+        iconSize="text-2xl"
+        density={1}
+      />
+
+      <div className="relative z-10">
+        <div className="text-sm mb-4 space-x-5">
+          <Link href="/privacy-policy" className="hover:text-[var(--accent)]">
             Privacy Policy
           </Link>
           <span>|</span>
-          <Link href="/terms" className="hover:text-blue-600 transition">
+          <Link href="/terms" className="hover:text-[var(--accent)]">
             Terms of Use
           </Link>
           <span>|</span>
-          <Link href="/contact" className="hover:text-blue-600 transition">
+          <Link href="/contact" className="hover:text-[var(--accent)]">
             Contact
           </Link>
         </div>
 
-        {/* 🌍 Social Icons */}
-        <div className="flex justify-center space-x-6 text-gray-500">
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FontAwesomeIcon icon={faFacebook} size="lg" />
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FontAwesomeIcon icon={faTwitter} size="lg" />
-          </a>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FontAwesomeIcon icon={faGithub} size="lg" />
-          </a>
-          <a href="mailto:support@hjtools.com">
+        <div className="flex justify-center space-x-6 mb-4 text-[var(--accent)]">
+          <FontAwesomeIcon icon={faFacebook} size="lg" />
+          <FontAwesomeIcon icon={faTwitter} size="lg" />
+          <FontAwesomeIcon icon={faGithub} size="lg" />
+          <a href="mailto:support@xorotools.com">
             <FontAwesomeIcon icon={faEnvelope} size="lg" />
           </a>
         </div>
 
-        <p className="text-sm text-gray-500">
-          &copy; {new Date().getFullYear()}{" "}
-          <span className="font-semibold">HJ Tools Hub</span>. All rights
-          reserved.
+        <p className="text-xs opacity-75 mb-2">
+          👀 <span id="visitor-count">Loading...</span> visitors today
         </p>
-
-        <p className="text-xs text-gray-400">
-          Powered by <span className="font-medium">HJ Tools</span> | Designed
-          for Everyone
+        <p className="text-xs opacity-75">
+          Made with ❤️ in <span className="text-[var(--accent)]">India</span>
+        </p>
+        <p className="text-xs opacity-60 mt-2">
+          &copy; {new Date().getFullYear()} XORO Tools — All rights reserved.
         </p>
       </div>
     </footer>
