@@ -2,7 +2,7 @@
 import AdSlot from "./AdSlot";
 
 interface ManualAdProps {
-  adSlot: string; // allow passing slot dynamically
+  adSlot: string;
   style?: React.CSSProperties;
   format?: string;
 }

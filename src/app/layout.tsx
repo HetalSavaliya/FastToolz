@@ -32,9 +32,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <Script
-          strategy="afterInteractive"
+          id="adsbygoogle-init"
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+          strategy="afterInteractive"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343`}
           crossOrigin="anonymous"
         />
       </head>
