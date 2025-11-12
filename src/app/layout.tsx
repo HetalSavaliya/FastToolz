@@ -20,8 +20,33 @@ export const metadata: Metadata = {
   title: "Free Online Tools | XORO Tools",
   description:
     "Smart, fast, and free tools for PDFs, images, text, and developers — all in one place.",
-  keywords: "online tools, pdf, image, text, json, converter, XORO Tools",
-  icons: { icon: "/favicon.ico" },
+  keywords: [
+    "online tools",
+    "pdf tools",
+    "image tools",
+    "text converter",
+    "developer utilities",
+    "free online converter",
+    "XORO Tools",
+  ],
+  verification: {
+    google: "tyyqK_n3ncqPOqQTl4DYnvNg8mnBwr2OjbhAugGgvhA",
+  },
+  openGraph: {
+    title: "Free Online Tools | XORO Tools",
+    description:
+      "Smart, fast, and free tools for PDFs, images, text, and developers — all in one place.",
+    url: "https://fasttoolz.onrender.com",
+    siteName: "XORO Tools",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Online Tools | XORO Tools",
+    description:
+      "Smart, fast, and free tools for PDFs, images, text, and developers — all in one place.",
+  },
 };
 
 export default function RootLayout({
@@ -32,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google AdSense Script */}
+        {/* ✅ Google AdSense Script */}
         <Script
           id="adsbygoogle-init"
           async
@@ -40,6 +65,7 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
           crossOrigin="anonymous"
         />
+
         <Script id="adsense-auto-ads" strategy="afterInteractive">
           {`
             (adsbygoogle = window.adsbygoogle || []).push({
@@ -49,15 +75,21 @@ export default function RootLayout({
           `}
         </Script>
       </head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen transition-colors duration-300`}
       >
+        {/* ✅ Header */}
         <Header />
+
+        {/* ✅ Ads wrapper for route-based display */}
         <ClientAdWrapper>
           <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             {children}
           </main>
         </ClientAdWrapper>
+
+        {/* ✅ Additional Sections */}
         <AdvantagesSection />
         <Footer />
       </body>
