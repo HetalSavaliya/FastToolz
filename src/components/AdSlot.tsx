@@ -1,4 +1,3 @@
-// src/components/AdSlot.tsx
 "use client";
 import { useEffect, useRef } from "react";
 
@@ -20,10 +19,13 @@ export default function AdSlot({ adClient, adSlot, style }: AdSlotProps) {
   useEffect(() => {
     if (!adRef.current) return;
 
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error("Adsense error:", err);
+    // Only push if the ad hasn't been initialized yet
+    if ((adRef.current as HTMLModElement).childNodes.length === 0) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (err) {
+        console.error("Adsense error:", err);
+      }
     }
   }, []);
 
@@ -31,11 +33,11 @@ export default function AdSlot({ adClient, adSlot, style }: AdSlotProps) {
     <ins
       ref={adRef}
       className="adsbygoogle block"
-      style={{ display: "block", minHeight: "100px", ...style }}
+      style={{ display: "block", ...style }}
       data-ad-client={adClient}
       data-ad-slot={adSlot}
       data-ad-format="auto"
-      data-adtest="on"
+      // data-adtest="on"
       data-full-width-responsive="true"
     ></ins>
   );

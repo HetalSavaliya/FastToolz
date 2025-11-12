@@ -1,5 +1,6 @@
 "use client";
 
+import AdSlot from "@/components/AdSlot";
 import { motion } from "framer-motion";
 import Script from "next/script";
 
@@ -12,8 +13,9 @@ export default function ToolsLayout({
     <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500">
       {/* Google AdSense Script */}
       <Script
+        strategy="afterInteractive"
         async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8822732191267343"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
         crossOrigin="anonymous"
       />
 
@@ -25,6 +27,20 @@ export default function ToolsLayout({
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         {children}
+        <div className="hidden lg:block fixed right-6 top-40 w-72">
+          <AdSlot
+            adClient="ca-pub-8822732191267343"
+            adSlot="2856658891"
+            style={{ minHeight: "250px" }}
+          />
+        </div>
+        <div className="mt-10">
+          <AdSlot
+            adClient="ca-pub-8822732191267343"
+            adSlot="1234567890"
+            style={{ minHeight: "250px" }}
+          />
+        </div>
       </motion.main>
     </div>
   );
