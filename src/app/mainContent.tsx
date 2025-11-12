@@ -52,12 +52,12 @@ export default function MainContentPage() {
 
       {/* 🧰 Tools Categories */}
       {hasResults ? (
-        filteredCategories.map(
-          (category, index) =>
-            category.tools.length > 0 && (
-              <>
+        <>
+          {filteredCategories.map((category, index) =>
+            category.tools.length > 0 ? (
+              <div key={category.title}>
+                {/* Category Section */}
                 <motion.section
-                  key={category.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -66,13 +66,13 @@ export default function MainContentPage() {
                 >
                   <h2
                     className="text-2xl md:text-3xl font-semibold mb-10 
-                               border-b-4 border-[var(--accent)] inline-block pb-2 
-                               text-[var(--foreground)]"
+                     border-b-4 border-[var(--accent)] inline-block pb-2 
+                     text-[var(--foreground)]"
                   >
                     {category.title}
                   </h2>
 
-                  {/* 🧩 Grid of Tools */}
+                  {/* Tools Grid */}
                   <motion.div
                     initial="hidden"
                     whileInView="visible"
@@ -97,27 +97,24 @@ export default function MainContentPage() {
                         <Link
                           href={tool.path}
                           className="group relative block rounded-2xl p-6 border border-transparent
-                                   bg-[var(--card)] text-[var(--card-text)] shadow-[0_2px_8px_rgba(0,0,0,0.05)]
-                                   backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)]
-                                   hover:border-[var(--accent)] hover:bg-[color-mix(in srgb,var(--card) 80%,var(--accent) 20%)]"
+                           bg-[var(--card)] text-[var(--card-text)] shadow-[0_2px_8px_rgba(0,0,0,0.05)]
+                           backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)]
+                           hover:border-[var(--accent)] hover:bg-[color-mix(in srgb,var(--card) 80%,var(--accent) 20%)]"
                         >
-                          {/* ✨ Glow Effect Behind Icon */}
                           <div className="absolute top-0 left-0 w-full h-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-[radial-gradient(circle_at_center,var(--accent)_0%,transparent_70%)] rounded-2xl blur-xl pointer-events-none" />
 
                           <div className="flex items-start gap-5 relative z-10">
-                            {/* Icon Bubble */}
                             <div className="relative flex-shrink-0">
                               <div className="absolute inset-0 blur-lg opacity-40 bg-[var(--accent)] rounded-full scale-90 transition-all duration-500 group-hover:opacity-70 group-hover:scale-100"></div>
                               <div
                                 className="relative w-14 h-14 flex items-center justify-center rounded-full text-2xl
-                                            bg-gradient-to-br from-[var(--accent)] to-[color-mix(in srgb,var(--accent)_80%,#00ffd0_20%)]
-                                            text-white shadow-lg group-hover:scale-110 transition-transform duration-500"
+                                  bg-gradient-to-br from-[var(--accent)] to-[color-mix(in srgb,var(--accent)_80%,#00ffd0_20%)]
+                                  text-white shadow-lg group-hover:scale-110 transition-transform duration-500"
                               >
                                 <FontAwesomeIcon icon={tool.icon} />
                               </div>
                             </div>
 
-                            {/* Text Content */}
                             <div>
                               <h3 className="text-lg font-bold mb-2 transition-colors duration-300 group-hover:text-[var(--accent)]">
                                 {tool.name}
@@ -128,39 +125,36 @@ export default function MainContentPage() {
                             </div>
                           </div>
 
-                          {/* Bottom Accent Bar */}
                           <div className="mt-5 h-1 w-0 bg-[var(--accent)] rounded-full transition-all duration-500 group-hover:w-full"></div>
                         </Link>
                       </motion.div>
                     ))}
                   </motion.div>
                 </motion.section>
-                {
-                  <div
-                    className="col-span-1 sm:col-span-2 lg:col-span-3 my-6"
-                    key={`ad-${index}`}
-                  >
-                    <ManualAd
-                      adSlot={
-                        index % 6 === 0
-                          ? "3582034276" // In-feed
-                          : index % 6 === 3
-                          ? "2033697625" // Multiplex
-                          : "4925129437" // Display
-                      }
-                      format={
-                        index % 6 === 0
-                          ? "fluid"
-                          : index % 6 === 3
-                          ? "autorelaxed"
-                          : "auto"
-                      }
-                    />
-                  </div>
-                }
-              </>
-            )
-        )
+
+                {/* 👇 Dynamic Ad after each category */}
+                <div className="col-span-1 sm:col-span-2 lg:col-span-3 my-10">
+                  <ManualAd
+                    adSlot={
+                      index % 3 === 0
+                        ? "3582034276" // In-feed
+                        : index % 3 === 1
+                        ? "2033697625" // Multiplex
+                        : "4925129437" // Display
+                    }
+                    format={
+                      index % 3 === 0
+                        ? "fluid"
+                        : index % 3 === 1
+                        ? "autorelaxed"
+                        : "auto"
+                    }
+                  />
+                </div>
+              </div>
+            ) : null
+          )}
+        </>
       ) : (
         <p className="text-center text-[var(--foreground)]/70 mt-20">
           😕 No tools found for "{search}"
