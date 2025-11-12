@@ -135,11 +135,29 @@ export default function MainContentPage() {
                     ))}
                   </motion.div>
                 </motion.section>
-                {(index + 1) % 3 === 0 && (
-                  <div className="col-span-1 sm:col-span-2 lg:col-span-3 my-6">
-                    <ManualAd />
+                {
+                  <div
+                    className="col-span-1 sm:col-span-2 lg:col-span-3 my-6"
+                    key={`ad-${index}`}
+                  >
+                    <ManualAd
+                      adSlot={
+                        index % 6 === 0
+                          ? "3582034276" // In-feed
+                          : index % 6 === 3
+                          ? "2033697625" // Multiplex
+                          : "4925129437" // Display
+                      }
+                      format={
+                        index % 6 === 0
+                          ? "fluid"
+                          : index % 6 === 3
+                          ? "autorelaxed"
+                          : "auto"
+                      }
+                    />
                   </div>
-                )}
+                }
               </>
             )
         )
@@ -153,14 +171,14 @@ export default function MainContentPage() {
       <div className="hidden lg:block fixed right-6 top-40 w-72">
         <AdSlot
           adClient="ca-pub-8822732191267343"
-          adSlot="2856658891"
+          adSlot="7404255757"
           style={{ minHeight: "250px" }}
         />
       </div>
 
       {/* 📦 Bottom Ad Slot */}
       <div className="mt-20">
-        <AdSlot adClient="ca-pub-8822732191267343" adSlot="1234567890" />
+        <AdSlot adClient="ca-pub-8822732191267343" adSlot="2856658891" />
       </div>
     </motion.main>
   );

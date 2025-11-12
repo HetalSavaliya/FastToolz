@@ -11,34 +11,42 @@ interface AdSlotProps {
   adClient: string;
   adSlot: string;
   style?: React.CSSProperties;
+  adTest?: boolean; // optional for testing
+  format?: string;
 }
 
-export default function AdSlot({ adClient, adSlot, style }: AdSlotProps) {
-  const adRef = useRef<HTMLModElement>(null);
+export default function AdSlot({
+  adClient,
+  adSlot,
+  style,
+  adTest,
+  format,
+}: AdSlotProps) {
+  const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!adRef.current) return;
+    const el = adRef.current;
+    if (!el || (el as any).dataset.adsLoaded) return;
 
-    // Only push if the ad hasn't been initialized yet
-    if ((adRef.current as HTMLModElement).childNodes.length === 0) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (err) {
-        console.error("Adsense error:", err);
-      }
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      (el as any).dataset.adsLoaded = "true";
+    } catch (err) {
+      console.error("Adsense error:", err);
     }
   }, []);
 
   return (
-    <ins
-      ref={adRef}
-      className="adsbygoogle block"
-      style={{ display: "block", ...style }}
-      data-ad-client={adClient}
-      data-ad-slot={adSlot}
-      data-ad-format="auto"
-      // data-adtest="on"
-      data-full-width-responsive="true"
-    ></ins>
+    <div ref={adRef}>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block", minHeight: "250px", ...style }}
+        data-ad-client={adClient}
+        data-ad-slot={adSlot}
+        data-ad-format={format ? format : "auto"}
+        data-full-width-responsive="true"
+        {...(adTest ? { "data-adtest": "on" } : {})}
+      ></ins>
+    </div>
   );
 }

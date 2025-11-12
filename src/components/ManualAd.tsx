@@ -1,27 +1,23 @@
 "use client";
-import { useEffect, useRef } from "react";
+import AdSlot from "./AdSlot";
 
-export default function ManualAd() {
-  const adRef = useRef<HTMLDivElement>(null);
+interface ManualAdProps {
+  adSlot: string; // allow passing slot dynamically
+  style?: React.CSSProperties;
+  format?: string;
+}
 
-  useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
+export default function ManualAd({
+  adSlot,
+  style,
+  format = "fluid",
+}: ManualAdProps) {
   return (
-    <div ref={adRef}>
-      <ins
-        className="adsbygoogle"
-        style={{ display: "block" }}
-        data-ad-format="fluid"
-        data-ad-layout-key="-ef+6k-30-ac+ty"
-        data-ad-client="ca-pub-8822732191267343"
-        data-ad-slot="3582034276"
-      ></ins>
-    </div>
+    <AdSlot
+      adClient="ca-pub-8822732191267343"
+      adSlot={adSlot}
+      style={{ minHeight: "250px", ...style }}
+      format={format}
+    />
   );
 }

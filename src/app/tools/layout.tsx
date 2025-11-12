@@ -30,15 +30,17 @@ export default function ToolsLayout({
         <div className="hidden lg:block fixed right-6 top-40 w-72">
           <AdSlot
             adClient="ca-pub-8822732191267343"
-            adSlot="2856658891"
+            adSlot="2033697625"
             style={{ minHeight: "250px" }}
+            format="autorelaxed"
           />
         </div>
         <div className="mt-10">
           <AdSlot
             adClient="ca-pub-8822732191267343"
-            adSlot="1234567890"
+            adSlot="9430516502"
             style={{ minHeight: "250px" }}
+            format={"fluid"}
           />
         </div>
       </motion.main>
