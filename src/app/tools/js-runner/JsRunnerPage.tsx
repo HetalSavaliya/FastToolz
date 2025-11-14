@@ -7,6 +7,9 @@ import {
   faArrowLeft,
   faPlay,
   faEraser,
+  faCode,
+  faShieldAlt,
+  faBolt,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function JsRunnerPage() {
@@ -17,7 +20,6 @@ export default function JsRunnerPage() {
 
   const runCode = () => {
     try {
-      // Capture console.log output
       const logs: string[] = [];
       const originalLog = console.log;
       console.log = (...args) => {
@@ -28,10 +30,8 @@ export default function JsRunnerPage() {
       // eslint-disable-next-line no-eval
       const result = eval(code);
       if (result !== undefined) logs.push(String(result));
-
       setOutput(logs.join("\n") || "✅ No output");
 
-      // Restore console.log
       console.log = originalLog;
     } catch (err) {
       setOutput(`❌ Error: ${(err as Error).message}`);
@@ -44,29 +44,35 @@ export default function JsRunnerPage() {
   };
 
   return (
-    <main className="w-full px-4 py-6">
+    <main className="w-full px-4 py-6 transition-colors duration-500 text-[var(--foreground)]">
+      {/* Back link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
-      <h1 className="text-3xl font-bold mb-2">⚡ Online JS Runner</h1>
-      <p className="text-gray-600 mb-6">
-        Write JavaScript code and run it instantly in your browser.
-      </p>
+      {/* Page heading */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
+          ⚡ Online JS Runner
+        </h1>
+        <p className="opacity-80">
+          Instantly write, execute, and test JavaScript directly in your
+          browser.
+        </p>
+      </div>
 
-      {/* Flex container for editor + output */}
-      <div className="grid grid-cols-2 gap-6 h-[70vh]">
-        {/* Code Editor + Buttons */}
-        <div className="flex flex-col">
-          {/* Buttons ABOVE editor */}
+      {/* Code + Output Section */}
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Code Editor Section */}
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm flex flex-col">
           <div className="flex gap-3 mb-4">
             <button
               onClick={runCode}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
+              className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] flex items-center gap-2 transition-all"
             >
               <FontAwesomeIcon icon={faPlay} />
               Run
@@ -74,7 +80,7 @@ export default function JsRunnerPage() {
 
             <button
               onClick={clearAll}
-              className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              className="border border-[var(--border)] text-[var(--foreground)] px-5 py-2 rounded-lg hover:bg-[var(--card-hover)] flex items-center gap-2 transition-all"
             >
               <FontAwesomeIcon icon={faEraser} />
               Clear
@@ -84,69 +90,98 @@ export default function JsRunnerPage() {
           <textarea
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="flex-1 w-full border rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-[#66AF85] outline-none resize-none"
+            className="flex-1 min-h-[300px] w-full border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-[var(--accent)] outline-none resize-none"
           />
         </div>
 
-        {/* Output */}
-        <div className="flex flex-col">
-          <h2 className="font-medium text-gray-700 mb-2">Output:</h2>
-          <pre className="flex-1 bg-black text-green-400 p-4 rounded-lg overflow-auto text-sm whitespace-pre-wrap">
+        {/* Output Section */}
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm flex flex-col">
+          <h2 className="font-semibold text-[var(--accent)] mb-3">
+            Console Output
+          </h2>
+          <pre className="flex-1 bg-black/80 text-green-400 p-4 rounded-lg overflow-auto text-sm whitespace-pre-wrap">
             {output || "➡️ Run your code to see output here"}
           </pre>
         </div>
       </div>
-      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Instant JavaScript Sandboxing and Testing
+
+      {/* Info Section */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2">
+          ⚡ JS Runner: Test, Debug, and Learn Instantly
         </h2>
-        <p className="mb-4">
-          Our **Online JS Runner** provides a lightweight, secure environment
-          for immediately executing and testing JavaScript code snippets. This
-          tool is perfect for quick prototyping, verifying syntax, exploring new
-          language features (like Promises or async/await), or practicing
-          algorithms without the overhead of setting up a local development
-          environment (Node.js or a full browser console). It's an indispensable
-          resource for students, interview candidates, and professional
-          developers who need instant feedback.
+        <p className="text-lg text-[var(--foreground)] mb-8">
+          The **Online JavaScript Runner** is your instant sandbox for testing
+          snippets, experimenting with APIs, or practicing algorithms — all
+          right in your browser. No setup, no installations — just pure coding.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Safe, Client-Side Execution
-        </h3>
-        <p className="mb-4">
-          Security is paramount. This runner operates entirely **client-side**,
-          meaning your code is executed directly within your web browser's
-          isolated JavaScript environment. There is absolutely **no server-side
-          compilation or execution** of your custom code, ensuring your
-          intellectual property and device remain safe. The output you see is
-          generated by the browser's own JavaScript engine and captured in the
-          designated "Console Output" panel, making debugging simple and clear.
-        </p>
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          {/* Left Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              <FontAwesomeIcon icon={faBolt} className="text-[var(--accent)]" />
+              ⚙️ Core Highlights
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Real-Time Execution:** Instantly see results as soon as you
+                click run.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **ES6+ Support:** Write modern JavaScript, including
+                async/await, classes, and arrow functions.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Error Feedback:** Get precise syntax or runtime error details
+                in a clean format.
+              </li>
+            </ul>
+          </div>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Key Advantages
-        </h3>
-        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-          <li>
-            **Zero Setup Required:** Write and run code instantly—no downloads,
-            installations, or configuration files needed.
-          </li>
-          <li>
-            **Full ES6+ Support:** Utilize modern JavaScript syntax, including
-            arrow functions, class declarations, and new array methods.
-          </li>
-          <li>
-            **Immediate Console Capture:** All `console.log()` statements, along
-            with any return values from the executed block, are captured and
-            displayed in a clean, scrollable output panel.
-          </li>
-          <li>
-            **Error Isolation:** Syntax errors and runtime exceptions are neatly
-            captured and reported, helping you pinpoint the exact line where a
-            bug occurred.
-          </li>
-        </ul>
+          {/* Right Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              <FontAwesomeIcon
+                icon={faShieldAlt}
+                className="text-[var(--accent)]"
+              />
+              🔒 Safe Client-Side Execution
+            </h3>
+            <ol className="space-y-4 text-[var(--foreground)] list-decimal pl-5">
+              <li>
+                **Write:** Enter your code directly in the editor. The syntax is
+                highlighted for easy reading.
+              </li>
+              <li>
+                **Run:** Click the **Run** button to execute your script in a
+                secure, isolated browser environment.
+              </li>
+              <li>
+                **View Output:** The results of your `console.log()` calls and
+                return values are captured in the output window.
+              </li>
+            </ol>
+
+            <div className="mt-6 p-4 border border-dashed border-[var(--accent)] rounded-lg text-center">
+              <div className="flex justify-center items-center gap-4 text-[var(--foreground)] text-3xl">
+                💻 ➡️ ⚡
+              </div>
+              <p className="text-sm text-[var(--foreground)] mt-2">
+                Execute and debug JavaScript instantly, with full safety in your
+                browser.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Start coding faster, debug smarter — experience instant JavaScript
+          execution today!
+        </p>
       </section>
     </main>
   );

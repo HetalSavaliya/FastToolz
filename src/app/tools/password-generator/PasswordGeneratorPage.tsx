@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,12 +8,14 @@ import {
   faKey,
   faCopy,
   faTrash,
+  faLock,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function PasswordGeneratorPage() {
   const [length, setLength] = useState(12);
   const [password, setPassword] = useState("");
 
+  // Function to generate random password
   const generatePassword = () => {
     const chars =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?";
@@ -24,128 +26,162 @@ export default function PasswordGeneratorPage() {
     setPassword(result);
   };
 
+  // Copy password to clipboard
   const handleCopy = () => {
     if (!password) return;
     navigator.clipboard.writeText(password);
     alert("Password copied to clipboard!");
   };
 
+  // Clear password
   const handleClear = () => {
     setPassword("");
   };
 
+  // Word counter (character count here)
+  const charCount = useMemo(() => password.length, [password]);
+
   return (
-    <main className="w-full min-h-screen px-6 py-10">
-      {/* Back Link */}
+    <main className="w-full px-6 py-10 transition-colors duration-500 text-[var(--foreground)]">
+      {/* 🡸 Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-gray-800">
-        <FontAwesomeIcon icon={faKey} />
-        Password Generator
-      </h1>
-      <p className="text-gray-600 mb-6">
-        Generate secure random passwords quickly.
-      </p>
-
-      {/* Password Display */}
-      <div className="flex gap-3 mb-4">
-        <input
-          type="text"
-          value={password}
-          readOnly
-          placeholder="Your password will appear here"
-          className="flex-1 border rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-[#66AF85] outline-none"
-        />
-        <button
-          onClick={handleCopy}
-          className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
-        >
-          <FontAwesomeIcon icon={faCopy} /> Copy
-        </button>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
+          <FontAwesomeIcon icon={faKey} className="text-[var(--accent)]" />
+          Password Generator
+        </h1>
+        <p className="opacity-80">
+          Generate secure, random passwords quickly — safe, local, and private.
+        </p>
       </div>
 
-      {/* Length Selector & Buttons */}
-      <div className="flex gap-3 items-center mb-6">
-        <label className="flex flex-col text-sm">
-          Length
+      {/* Password Display */}
+      <div className="p-4 border border-[var(--border)] bg-[var(--card)] rounded-lg shadow-sm mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-3">
+          <input
+            type="text"
+            value={password}
+            readOnly
+            placeholder="Your password will appear here"
+            className="flex-1 border border-[var(--accent)] bg-[var(--background)] text-[var(--foreground)] rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-[var(--accent)] outline-none"
+          />
+          <button
+            onClick={handleCopy}
+            disabled={!password}
+            className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            <FontAwesomeIcon icon={faCopy} /> Copy
+          </button>
+        </div>
+
+        {/* Word Count */}
+        <div className="text-sm text-[var(--foreground)] opacity-80 text-right">
+          Characters: <span className="font-semibold">{charCount}</span>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 mb-10">
+        <label className="flex flex-col text-sm text-[var(--foreground)]">
+          Password Length
           <input
             type="number"
             min={6}
             max={64}
             value={length}
             onChange={(e) => setLength(parseInt(e.target.value) || 12)}
-            className="border rounded px-2 py-1 mt-1 w-24"
+            className="border border-[var(--accent)] bg-[var(--card)] rounded-lg px-3 py-2 mt-1 w-28 text-[var(--foreground)]"
           />
         </label>
+
         <button
           onClick={generatePassword}
-          className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71]"
+          className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] transition-all"
         >
           Generate
         </button>
+
         <button
           onClick={handleClear}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 flex items-center gap-2"
+          className="border border-[var(--border)] text-[var(--foreground)] px-5 py-2 rounded-lg hover:bg-[var(--card)] transition-all flex items-center gap-2"
         >
           <FontAwesomeIcon icon={faTrash} /> Clear
         </button>
       </div>
-      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Why Use a Random Password Generator?
+
+      {/* Info Section (Styled Like PDFUnlockPage) */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2 flex items-center gap-2">
+          <FontAwesomeIcon icon={faLock} className="text-[var(--accent)]" />
+          Strengthen Your Security with Smart Passwords
         </h2>
-        <p className="mb-4">
-          In today's digital landscape, a strong, unique password is your first
-          and most critical line of defense against cyber threats. Using a
-          **random password generator** ensures that your credentials are not
-          based on dictionary words, personal information (like birth dates or
-          names), or simple patterns, making them virtually impossible for
-          hackers and brute-force programs to guess. This tool uses a robust
-          algorithm based on a wide set of characters to deliver passwords with
-          high cryptographic entropy.
+
+        <p className="text-lg text-[var(--foreground)] mb-8 leading-relaxed">
+          A strong password is your first defense against cyber threats. Our{" "}
+          <strong>Password Generator</strong> ensures your credentials are truly
+          random and unguessable — with combinations of letters, numbers, and
+          symbols that make brute-force attacks nearly impossible.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Security and Best Practices
-        </h3>
-        <p className="mb-4">
-          We strongly recommend passwords of **12 characters or more**,
-          incorporating a mix of **uppercase letters, lowercase letters,
-          numbers, and symbols**. While longer passwords are technically more
-          secure, modern security standards typically prioritize the
-          **unpredictability** generated by true randomness. All password
-          generation in this tool is performed **client-side** (in your
-          browser), meaning the passwords generated are never transmitted over
-          the internet or logged by our servers, guaranteeing your privacy.
-        </p>
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          {/* Benefits */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3">
+              🧠 Why Use a Random Password Generator
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Unbreakable Security:</strong> Randomized passwords are
+                virtually impossible to guess or crack.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Full Privacy:</strong> Generated passwords are created
+                locally in your browser — never stored or sent online.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Convenient & Fast:</strong> Create strong passwords for
+                all your accounts in seconds.
+              </li>
+            </ul>
+          </div>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Tips for Managing Strong Passwords
-        </h3>
-        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-          <li>
-            **Use a Password Manager:** Never rely on your memory. Store
-            generated passwords securely using tools like Google Password
-            Manager, LastPass, or 1Password.
-          </li>
-          <li>
-            **Unique for Every Account:** Use a different randomly generated
-            password for every single online service to prevent a breach on one
-            site from compromising all your accounts.
-          </li>
-          <li>
-            **Enable Two-Factor Authentication (2FA):** For your most critical
-            accounts (email, banking), use 2FA as an essential secondary defense
-            layer.
-          </li>
-        </ul>
+          {/* How It Works */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3">
+              ⚙️ How It Works
+            </h3>
+            <ol className="space-y-4 text-[var(--foreground)] list-decimal pl-5">
+              <li>Set your desired password length.</li>
+              <li>Click “Generate” to instantly create a secure password.</li>
+              <li>Copy it safely and store it in your password manager.</li>
+            </ol>
+
+            <div className="mt-6 p-4 border border-dashed border-[var(--accent)] rounded-lg text-center">
+              <div className="flex justify-center items-center gap-4 text-[var(--foreground)] text-3xl">
+                🔒 ➡️ 🧩 ➡️ 🔑
+              </div>
+              <p className="text-sm text-[var(--foreground)] mt-2">
+                Transform simple phrases into cryptographically strong keys.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Build smarter security habits today — generate strong passwords that
+          protect your identity and privacy effortlessly.
+        </p>
       </section>
     </main>
   );

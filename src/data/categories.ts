@@ -1,3 +1,4 @@
+import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import {
     faFilePdf,
     faScissors,
@@ -16,6 +17,7 @@ import {
     faRulerCombined,
     faPlay,
     faQrcode,
+    faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const categories = [
@@ -111,23 +113,17 @@ export const categories = [
                 path: "/tools/video-compressor",
                 icon: faCompress,
             },
-            // {
-            //     name: "Video to MP3",
-            //     description: "Extract and convert the audio track from video files to MP3 format.",
-            //     path: "/tools/video-to-mp3",
-            //     icon: faMusic,
-            // },
+            {
+                name: "YouTube Downloader",
+                description: "Download videos from YouTube and choose your preferred format — MP4, MP3, or more.",
+                path: "/tools/youtube-downloader",
+                icon: faYoutube, // or faDownload if you prefer a neutral icon
+            }
         ],
     },
     {
         title: "📝 Text & Utility Tools",
         tools: [
-            // {
-            //     name: "Online Notepad",
-            //     description: "Write, edit, and autosave notes in your browser.",
-            //     path: "/tools/online-notepad",
-            //     icon: faFileLines,
-            // },
             {
                 name: "Text Case Converter",
                 description: "Convert text to UPPERCASE, lowercase, Title Case, etc.",

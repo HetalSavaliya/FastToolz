@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  tool-app-dev:
+    container_name: tool-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  tool-app-prod:
+    container_name: tool-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+
+
+      # docker-compose up --build tool-app-dev

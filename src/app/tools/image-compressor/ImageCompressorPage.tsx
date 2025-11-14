@@ -6,11 +6,13 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
-  faUpload,
   faDownload,
   faRotateLeft,
+  faImage,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import NextImage from "next/image";
+import UploadArea from "@/components/UploadArea";
 
 export default function ImageCompressorPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -24,12 +26,21 @@ export default function ImageCompressorPage() {
   const resultRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload a valid image file.");
+      return;
+    }
     setImageFile(file);
     setCompressedUrl(null);
-
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     setOriginalSize(file.size / 1024); // KB
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileChange(file);
   };
 
   const handleCompress = async () => {
@@ -38,7 +49,7 @@ export default function ImageCompressorPage() {
 
     try {
       const compressedImage = await imageCompression(imageFile, {
-        maxSizeMB: quality / 100, // dynamic compression
+        maxSizeMB: quality / 100,
         useWebWorker: true,
       });
 
@@ -60,22 +71,6 @@ export default function ImageCompressorPage() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.startsWith("image/")) {
-        handleFileChange(file);
-      } else {
-        alert("Please drop an image file.");
-      }
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
   const handleReset = () => {
     setImageFile(null);
     setPreviewUrl(null);
@@ -86,150 +81,157 @@ export default function ImageCompressorPage() {
   };
 
   return (
-    <main className="w-full px-4 py-6">
+    <main className="w-full px-4 py-6 transition-colors duration-500 text-[var(--foreground)]">
+      {/* 🡸 Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
+
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
           📉 Image Compressor
         </h1>
-        <p className="text-gray-600">
-          Upload or drag an image, adjust compression quality, and download the
-          optimized image directly from your browser.
+        <p className="opacity-80">
+          Upload an image, adjust compression quality, and download an optimized
+          version — all securely within your browser.
         </p>
       </div>
-      {/* Upload area */}
-      <div
+
+      {/* Upload Area */}
+      <UploadArea
+        title="Drag & drop your images here"
+        subtitle="or click to browse — supports JPEG, PNG, and more"
+        icon={faImage}
+        accept="image/*"
+        multiple={false}
+        onFileChange={(file) => handleFileChange(file as File)}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center cursor-pointer bg-white hover:bg-gray-50 transition mb-6"
-      >
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileChange(file);
-            }}
+      />
+
+      {/* File Details */}
+      {imageFile && (
+        <div className="mt-6 mb-6 p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FontAwesomeIcon
+              icon={faImage}
+              className="text-[var(--accent)] text-2xl"
+            />
+            <div>
+              <p className="font-medium">{imageFile.name}</p>
+              <p className="text-sm opacity-70">
+                {(imageFile.size / 1024).toFixed(1)} KB
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleReset}
+            className="text-red-500 hover:text-red-700 transition-all flex items-center gap-2"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+            Delete
+          </button>
+        </div>
+      )}
+
+      {/* Compression Controls */}
+      {imageFile && (
+        <div className="mt-6 mb-6">
+          <h3 className="font-semibold mb-2 text-[var(--foreground)]">
+            ⚙️ Compression Settings
+          </h3>
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <label className="flex flex-col text-sm">
+              Quality (%)
+              <input
+                type="number"
+                min="10"
+                max="100"
+                value={quality}
+                onChange={(e) => setQuality(Number(e.target.value))}
+                className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 mt-1 w-32 placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+              />
+            </label>
+            <button
+              onClick={handleCompress}
+              disabled={loading}
+              className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-all"
+            >
+              {loading ? "Compressing..." : "Compress Image"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Preview */}
+      {previewUrl && !compressedUrl && (
+        <div className="mt-6">
+          <h3 className="font-semibold text-[var(--foreground)] mb-2">
+            📷 Original Preview
+          </h3>
+          <NextImage
+            src={previewUrl}
+            alt="Original"
+            width={400}
+            height={400}
+            className="border rounded-lg shadow-sm max-w-full"
           />
-          <div className="text-gray-600">
-            <FontAwesomeIcon icon={faUpload} className="text-2xl mb-2" />
-            <p className="text-sm font-medium">
-              Click to upload or drag an image here
-            </p>
-          </div>
-        </label>
-      </div>
-      {/* Compression Controls + Preview */}
-      {previewUrl && (
-        <>
-          <div className="mb-10 flex flex-col gap-4">
-            <h3 className="font-semibold text-gray-700">⚙️ Compression</h3>
-            <div className="flex gap-4 flex-wrap items-center">
-              <label className="flex flex-col text-sm">
-                Quality (%)
-                <input
-                  type="number"
-                  min="10"
-                  max="100"
-                  value={quality || ""} // prevent NaN showing in UI
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "") {
-                      setQuality(0); // or some default like 80
-                    } else {
-                      const num = parseInt(val, 10);
-                      if (!isNaN(num)) setQuality(num);
-                    }
-                  }}
-                  className="border rounded px-2 py-1 mt-1 w-32"
-                />
-              </label>
-            </div>
+          <p className="text-sm opacity-70 mt-2">
+            Size: {originalSize.toFixed(2)} KB
+          </p>
+        </div>
+      )}
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleCompress}
-                disabled={loading}
-                className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50"
-              >
-                {loading ? "Compressing..." : "Compress Image"}
-              </button>
-              <button
-                onClick={handleReset}
-                className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <FontAwesomeIcon icon={faRotateLeft} />
-                Reset
-              </button>
-            </div>
-          </div>
-
-          {!compressedUrl && (
-            <div className="mt-8">
-              <h3 className="font-semibold text-gray-700 mb-2">
-                📷 Original Preview
-              </h3>
+      {/* Comparison */}
+      {compressedUrl && (
+        <div
+          ref={resultRef}
+          className="mt-8 p-4 border border-[var(--accent)] bg-[var(--card)] rounded-lg shadow-md"
+        >
+          <h3 className="font-medium text-[var(--accent)] mb-2">
+            ✅ Compression Complete!
+          </h3>
+          <div className="grid md:grid-cols-2 gap-8 mt-4">
+            {/* Original */}
+            <div>
+              <h4 className="font-semibold text-[var(--foreground)] mb-2">
+                Original
+              </h4>
               <NextImage
-                src={previewUrl}
+                src={previewUrl!}
                 alt="Original"
                 width={400}
                 height={400}
-                className="border rounded shadow-sm max-w-full"
+                className="border rounded-lg shadow-sm"
               />
-              <p className="text-xs text-gray-500 mt-2">
-                Size: {originalSize.toFixed(2)} KB
-              </p>
-            </div>
-          )}
-        </>
-      )}
-      {/* Compressed Result Section */}
-      {compressedUrl && (
-        <div ref={resultRef} className="mt-12">
-          <h2 className="font-semibold text-gray-700 mb-4">🆚 Comparison</h2>
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Original */}
-            <div>
-              <h3 className="text-gray-700 font-medium mb-1">Original Image</h3>
-              <NextImage
-                src={previewUrl!}
-                alt="Original-2"
-                width={400}
-                height={400}
-                className="border rounded shadow-sm max-w-full"
-              />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-sm opacity-70 mt-2">
                 {originalSize.toFixed(2)} KB
               </p>
             </div>
 
             {/* Compressed */}
             <div>
-              <h3 className="text-gray-700 font-medium mb-1">
-                Compressed Image
-              </h3>
+              <h4 className="font-semibold text-[var(--foreground)] mb-2">
+                Compressed
+              </h4>
               <NextImage
                 src={compressedUrl}
                 alt="Compressed"
                 width={400}
                 height={400}
-                className="border rounded shadow-sm max-w-full"
+                className="border rounded-lg shadow-sm"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-sm opacity-70 mt-2">
                 {compressedSize.toFixed(2)} KB
               </p>
               <a
                 href={compressedUrl}
                 download="compressed-image.jpg"
-                className="inline-flex items-center gap-2 text-[#66AF85] font-medium underline mt-2"
+                className="inline-flex items-center gap-2 text-[var(--accent)] font-medium underline mt-3"
               >
                 <FontAwesomeIcon icon={faDownload} />
                 Download Compressed Image
@@ -238,88 +240,44 @@ export default function ImageCompressorPage() {
           </div>
         </div>
       )}
-      {/* -------------------------------------------------------- */}     {" "}
-      {/* 🖼️ ADDED: RICH, ORIGINAL CONTENT FOR GOOGLE ADS / SEO */}     {" "}
-      {/* -------------------------------------------------------- */}     {" "}
-      <section className="rich-content text-gray-700 mt-16 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
-               {" "}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                    Why Image Compression is Essential        {" "}
+
+      {/* SEO Rich Content */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2">
+          📉 Image Compressor: Optimize Without Losing Quality
         </h2>
-               {" "}
-        <p className="mb-4">
-                    In today's digital landscape, the size of your images
-          directly impacts the **speed and performance** of your website or
-          application. Large, unoptimized images slow down page loading,
-          frustrate users, and negatively affect your SEO rankings. Our **Image
-          Compressor** tool solves this by providing a simple, client-side
-          solution to dramatically reduce file sizes without noticeable loss in
-          visual quality.        {" "}
+        <p className="text-lg mb-6 opacity-90">
+          Large image files slow down websites and consume unnecessary storage.
+          With our **browser-based image compressor**, you can reduce file sizes
+          while keeping your images sharp and vibrant — all without uploading
+          anything to a server.
         </p>
-               {" "}
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-                    Lossy vs. Lossless Compression        {" "}
-        </h3>
-               {" "}
-        <p className="mb-4">
-                    This tool primarily uses **lossy compression** (like JPEG),
-          which intelligently removes redundant data from the image file. You
-          control this process directly using the **Quality (%)** slider.
-          Setting a quality level of **80%** often achieves a significant file
-          size reduction (up to 80-90%) while maintaining excellent visual
-          fidelity. We process the image using a **Web Worker** to ensure your
-          browser remains responsive, providing a smooth and fast compression
-          experience.        {" "}
+
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🌟 Why Compress Images?
+            </h3>
+            <ul className="space-y-3 list-none pl-0">
+              <li>• Faster website load times for better SEO and UX.</li>
+              <li>• Save storage and bandwidth without losing clarity.</li>
+              <li>• Perfect for uploading to websites, apps, and emails.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              ⚙️ How It Works
+            </h3>
+            <ol className="list-decimal pl-5 space-y-3">
+              <li>Upload an image using drag & drop or the file picker.</li>
+              <li>Set your desired compression **Quality (%)**.</li>
+              <li>Click **Compress Image**, then download instantly.</li>
+            </ol>
+          </div>
+        </div>
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Save space. Speed up your site. Keep your visuals stunning. 🌈
         </p>
-               {" "}
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-                    Benefits of Our Browser-Based Tool        {" "}
-        </h3>
-               {" "}
-        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-                     {" "}
-          <li>
-            **Complete Privacy:** All processing happens entirely within your
-            browser (client-side). Your image files are **never uploaded** to a
-            server.
-          </li>
-                     {" "}
-          <li>
-            **Immediate Feedback:** See the exact file size reduction instantly
-            with a clear before-and-after size comparison.
-          </li>
-                     {" "}
-          <li>
-            **Flexible Control:** Easily adjust the target quality to find the
-            perfect balance between file size and image sharpness for your
-            specific needs.
-          </li>
-                 {" "}
-        </ul>
-               {" "}
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-                    Simple Steps to Optimize Your Images        {" "}
-        </h3>
-               {" "}
-        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
-                     {" "}
-          <li>
-            **Upload:** Drag and drop your image (JPEG, PNG, etc.) or click to
-            select a file.
-          </li>
-                     {" "}
-          <li>
-            **Adjust:** Set your desired **Quality (%)** level. Lower numbers
-            mean smaller files and more compression.
-          </li>
-                     {" "}
-          <li>
-            **Download:** Click **"Compress Image"** and then download your
-            optimized file to use immediately for web, email, or sharing.
-          </li>
-                 {" "}
-        </ol>
-             {" "}
       </section>
     </main>
   );

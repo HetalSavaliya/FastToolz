@@ -61,18 +61,20 @@ export const defaultSEO: Metadata = {
 };
 
 // Reusable function for tool-specific SEO
+// src/lib/seo.ts
 export function generateToolSEO({
   title,
   description,
   slug,
   keywords = [],
+  openGraph, // ✅ add this
 }: {
   title: string;
   description: string;
   slug: string;
   keywords?: string[];
+  openGraph?: any; // ✅ make it optional
 }): Metadata {
-  // Use placeholder image for the tool
   const imageUrl = `https://placehold.co/1200x630?text=${encodeURIComponent(
     title
   )}`;
@@ -84,7 +86,7 @@ export function generateToolSEO({
     authors: [{ name: "Hetal Savaliya" }],
     creator: "Hetal Savaliya",
     publisher: "FreeTools",
-    openGraph: {
+    openGraph: openGraph || {
       title: `${title} - Free Online Tool`,
       description,
       url: `${baseUrl}/tools/${slug}`,
@@ -103,7 +105,7 @@ export function generateToolSEO({
       card: "summary_large_image",
       title: `${title} - Free Online Tool`,
       description,
-      images: [imageUrl],
+      images: [openGraph?.images?.[0]?.url || imageUrl],
       creator: "@hetalsavaliya",
     },
     robots: {

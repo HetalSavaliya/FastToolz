@@ -12,7 +12,7 @@ import {
 
 export default function QRCodeGeneratorPage() {
   const [text, setText] = useState("https://example.com");
-  const [size, setSize] = useState(200);
+  const [size, setSize] = useState(220);
 
   const downloadQR = () => {
     const canvas = document.getElementById("qr-gen") as HTMLCanvasElement;
@@ -25,57 +25,65 @@ export default function QRCodeGeneratorPage() {
   };
 
   return (
-    <main className="w-full h-screen flex flex-col px-6 py-6">
-      {/* Back */}
+    <main className="w-full px-4 py-8 transition-colors duration-500 text-[var(--foreground)]">
+      {/* 🔙 Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
-      {/* Title */}
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-        <FontAwesomeIcon icon={faQrcode} />
-        QR Code Generator
-      </h1>
-      <p className="text-gray-600 mb-6">
-        Enter text or a URL to instantly generate a QR code.
-      </p>
+      {/* 🧩 Title Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
+          <FontAwesomeIcon icon={faQrcode} className="text-[var(--accent)]" />
+          QR Code Generator
+        </h1>
+        <p className="opacity-80">
+          Instantly generate scannable QR codes for URLs, text, Wi-Fi, or any
+          data.
+        </p>
+      </div>
 
-      <div className="flex flex-1 gap-6">
-        {/* Left side – Input */}
-        <div className="flex-1 flex flex-col gap-4">
+      {/* 🧱 Tool Container */}
+      <div className="grid md:grid-cols-2 gap-8 p-6 border border-[var(--border)] rounded-2xl bg-[var(--card)] shadow-sm">
+        {/* Left Side - Input */}
+        <div className="flex flex-col gap-5">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={6}
-            className="w-full border rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-[#66AF85] outline-none"
-            placeholder="Enter text, URL, or anything..."
+            className="w-full border border-[var(--accent)] bg-transparent rounded-lg p-3 text-[var(--foreground)] font-mono text-sm placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+            placeholder="Enter text, URL, Wi-Fi details, or anything..."
           />
 
-          <label className="text-gray-700 font-medium">Size: {size}px</label>
-          <input
-            type="range"
-            min={100}
-            max={500}
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            className="w-full"
-          />
+          <div>
+            <label className="text-[var(--foreground)] font-medium block mb-2">
+              Size: <span className="text-[var(--accent)]">{size}px</span>
+            </label>
+            <input
+              type="range"
+              min={100}
+              max={500}
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              className="w-full accent-[var(--accent)]"
+            />
+          </div>
 
           <button
             onClick={downloadQR}
-            className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2 w-fit"
+            className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] flex items-center gap-2 w-fit transition-all"
           >
             <FontAwesomeIcon icon={faDownload} />
             Download QR
           </button>
         </div>
 
-        {/* Right side – QR Preview */}
-        <div className="flex-1 flex items-center justify-center bg-gray-50 border rounded-lg">
+        {/* Right Side - Preview */}
+        <div className="flex items-center justify-center bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg p-4">
           <QRCodeCanvas
             id="qr-gen"
             value={text || " "}
@@ -87,81 +95,84 @@ export default function QRCodeGeneratorPage() {
           />
         </div>
       </div>
-      <section>
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
-            ✨ The Versatile QR Code Generator
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Quick Response (QR) codes are powerful tools for bridging the gap
-            between physical and digital worlds. Our generator allows you to
-            create high-quality, scannable QR codes for any text, URL, contact
-            information, or Wi-Fi network details—instantly and free of charge.
-          </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
-                🚀 Practical Applications
-              </h3>
-              <ul className="space-y-4 text-gray-600 list-none pl-0">
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Business Cards & Networking:** Embed your contact details
-                  (VCard) so people can save them with a single scan.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Marketing & Promotions:** Link directly to product pages,
-                  social media profiles, or special offers from print materials.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Wi-Fi Access:** Generate a code that instantly connects
-                  guests to your Wi-Fi without typing a password.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Event Sign-ups:** Direct attendees to an online registration
-                  or ticketing page.
-                </li>
-              </ul>
-            </div>
+      {/* 📘 Info Section */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2">
+          ✨ QR Code Generator: Simplify Your Digital Sharing
+        </h2>
+        <p className="text-lg text-[var(--foreground)] mb-8">
+          QR codes have become an essential part of modern communication,
+          bridging physical and digital spaces seamlessly. With our{" "}
+          <strong>QR Code Generator</strong>, you can instantly create
+          high-quality, scannable QR codes for any link, message, or information
+          — no registration required.
+        </p>
 
-            <div>
-              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
-                ⚙️ Features and Customization
-              </h3>
-              <ul className="space-y-4 text-gray-600 list-none pl-0">
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Flexible Input:** Works with simple text, complex URLs,
-                  email addresses, and phone numbers.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **Adjustable Size:** Use the slider to set the exact pixel
-                  size of the QR code for perfect display on any medium.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **High Error Correction (Level H):** Ensures the code remains
-                  scannable even if partially damaged or obscured.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">•</span>
-                  **PNG Download:** Download the final image as a portable
-                  network graphic (.png) for clean, high-resolution usage.
-                </li>
-              </ul>
-            </div>
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          {/* Left Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🚀 Practical Use Cases
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Business Cards:</strong> Add QR codes with your
+                portfolio or contact links for instant connections.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Marketing Materials:</strong> Print QR codes that lead
+                to landing pages, campaigns, or product demos.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Wi-Fi Sharing:</strong> Allow guests to connect
+                automatically without typing credentials.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Event Registration:</strong> Instantly redirect users to
+                your online sign-up or ticketing form.
+              </li>
+            </ul>
           </div>
 
-          <p className="text-center text-lg text-green-700 font-medium mt-10">
-            Start generating now! Simply paste your link or message into the
-            text area to see your QR code appear instantly.
-          </p>
+          {/* Right Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              ⚙️ Customization Features
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Flexible Input:</strong> Supports text, URLs, phone
+                numbers, and more.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Adjustable Size:</strong> Fine-tune your QR resolution
+                using the slider.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>High Error Correction (H):</strong> Keeps the code
+                scannable even if partially obscured.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <strong>Instant PNG Download:</strong> Save high-resolution QR
+                images directly.
+              </li>
+            </ul>
+          </div>
         </div>
+
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Create your personalized QR code today — it’s fast, easy, and
+          completely free!
+        </p>
       </section>
     </main>
   );

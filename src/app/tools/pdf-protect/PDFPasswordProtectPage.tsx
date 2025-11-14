@@ -14,8 +14,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { saveAs } from "file-saver"; // Make sure this is still installed
 import { Buffer } from "buffer"; // Import Buffer
-import axios, { AxiosError } from "axios";
 import UploadArea from "@/components/UploadArea";
+import { ApiPostFormData } from "@/utils/apiHelper";
 
 global.Buffer = Buffer;
 
@@ -50,50 +50,46 @@ export default function PDFPasswordProtectPage() {
       setErrorMessage("Please upload a PDF and enter a password.");
       return;
     }
+
     setErrorMessage(null);
     setLoading(true);
 
     try {
-      const pdfBytes = await pdfFile.arrayBuffer();
-      const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
+      // Create FormData to send file and password
+      const formData = new FormData();
+      formData.append("file", pdfFile);
+      formData.append("password", password);
 
-      const { data } = await axios.post("/api/protect-pdf", {
-        pdfBytes: pdfBytesBase64,
-        password: password,
-        filename: pdfName,
-      });
+      // Call backend API using apiHelper
+      const { success, data, error } = await ApiPostFormData(
+        "/pdf/pdf-protect",
+        formData
+      );
 
+      if (!success) {
+        setErrorMessage(`Failed to protect PDF: ${error}`);
+        return;
+      }
+
+      // Convert Base64 returned by backend to Uint8Array
       const encryptedPdfBytes = new Uint8Array(
         Buffer.from(data.encryptedPdfBytesBase64, "base64")
       );
-      const blob = new Blob([encryptedPdfBytes], { type: "application/pdf" });
 
+      // Create Blob for download
+      const blob = new Blob([encryptedPdfBytes], { type: "application/pdf" });
       setProtectedBlob(blob);
+
+      // Update filename
       setPdfName(data.filename);
 
+      // Scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (error: unknown) {
-      console.error("Error protecting PDF:", error);
-
-      let message = "Unknown error";
-
-      if (error instanceof Error) {
-        message = error.message;
-      }
-
-      // Axios-specific error handling
-      if (
-        (error as AxiosError).response &&
-        typeof (error as AxiosError).response?.data === "object" &&
-        typeof ((error as AxiosError).response?.data as any).message ===
-          "string"
-      ) {
-        message = ((error as AxiosError).response?.data as any).message;
-      }
-
-      setErrorMessage(`Failed to protect PDF: ${message}`);
+    } catch (err: unknown) {
+      console.error("Unexpected error:", err);
+      setErrorMessage("Failed to protect PDF: Unknown error occurred.");
     } finally {
       setLoading(false);
     }

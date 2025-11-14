@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faRulerCombined,
+  faRotateLeft,
+  faExchangeAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function UnitConverterPage() {
@@ -43,158 +45,161 @@ export default function UnitConverterPage() {
   };
 
   return (
-    <main className="w-full min-h-screen px-6 py-10">
+    <main className="w-full px-4 py-6 text-[var(--foreground)] transition-colors duration-500">
       {/* Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-gray-800">
-        <FontAwesomeIcon icon={faRulerCombined} />
-        Unit Converter
-      </h1>
-      <p className="text-gray-600 mb-6">
-        Convert between length units like meters, kilometers, miles, and more.
-      </p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
+          <FontAwesomeIcon
+            icon={faRulerCombined}
+            className="text-[var(--accent)]"
+          />
+          Unit Converter
+        </h1>
+        <p className="opacity-80">
+          Convert between common length units like meters, kilometers, miles,
+          and more — quickly and accurately.
+        </p>
+      </div>
 
       {/* Input & Unit Selection */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start">
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Enter value"
-          className="border rounded-lg px-4 py-2 w-full sm:w-48 focus:ring-2 focus:ring-[#66AF85] outline-none"
-        />
-        <select
-          value={fromUnit}
-          onChange={(e) => setFromUnit(e.target.value)}
-          className="border rounded-lg px-4 py-2 w-full sm:w-48"
-        >
-          {Object.keys(lengthUnits).map((unit) => (
-            <option key={unit} value={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-        <select
-          value={toUnit}
-          onChange={(e) => setToUnit(e.target.value)}
-          className="border rounded-lg px-4 py-2 w-full sm:w-48"
-        >
-          {Object.keys(lengthUnits).map((unit) => (
-            <option key={unit} value={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="p-6 border border-[var(--border)] bg-[var(--card)] rounded-xl shadow-sm mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="border border-[var(--accent)] bg-[var(--background)] text-[var(--foreground)] rounded-lg px-4 py-2 w-full sm:w-56 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          />
 
-      {/* Action Buttons */}
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={handleConvert}
-          className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71]"
-        >
-          Convert
-        </button>
-        <button
-          onClick={handleReset}
-          className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100"
-        >
-          Reset
-        </button>
-      </div>
+          <select
+            value={fromUnit}
+            onChange={(e) => setFromUnit(e.target.value)}
+            className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded-lg px-4 py-2 w-full sm:w-56"
+          >
+            {Object.keys(lengthUnits).map((unit) => (
+              <option key={unit} value={unit}>
+                {unit}
+              </option>
+            ))}
+          </select>
 
-      {/* Result */}
-      {result !== null && (
-        <div className="bg-gray-50 border rounded-lg p-4 text-gray-800 font-semibold">
-          {value} {fromUnit} = {result} {toUnit}
+          <FontAwesomeIcon
+            icon={faExchangeAlt}
+            className="text-[var(--accent)] text-xl hidden sm:block"
+          />
+
+          <select
+            value={toUnit}
+            onChange={(e) => setToUnit(e.target.value)}
+            className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded-lg px-4 py-2 w-full sm:w-56"
+          >
+            {Object.keys(lengthUnits).map((unit) => (
+              <option key={unit} value={unit}>
+                {unit}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
-      <section>
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 mt-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">
-            📏 The Ultimate Length Unit Converter
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Dealing with international specifications, academic problems, or DIY
-            projects often requires converting units of measurement. Our **Unit
-            Converter** simplifies this process, providing instant and accurate
-            conversions between common length units, eliminating manual
-            calculations and potential errors.
-          </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
-                🌎 Bridging Metric and Imperial
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Easily navigate between the world's two major measurement
-                systems—the **Metric System** (meters, kilometers) and the
-                **Imperial/US System** (miles, feet, inches). This is crucial
-                for:
-              </p>
-              <ul className="space-y-3 text-gray-600 list-none pl-0">
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">✓</span>
-                  **Travel & Geography:** Convert miles to kilometers for
-                  distance planning.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">✓</span>
-                  **Engineering & Construction:** Switch between feet/inches and
-                  metric units for blueprints.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">✓</span>
-                  **Education:** Verify homework answers or solve physics
-                  problems with consistent units.
-                </li>
-              </ul>
-            </div>
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 mt-6">
+          <button
+            onClick={handleConvert}
+            className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] transition-all"
+          >
+            Convert
+          </button>
+          <button
+            onClick={handleReset}
+            className="border border-[var(--border)] text-[var(--foreground)] px-5 py-2 rounded-lg hover:bg-[var(--card)] flex items-center gap-2 transition-all"
+          >
+            <FontAwesomeIcon icon={faRotateLeft} />
+            Reset
+          </button>
+        </div>
 
-            <div>
-              <h3 className="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
-                🔢 Simple, Accurate Conversion
-              </h3>
-              <ol className="space-y-4 text-gray-600 list-decimal pl-5">
-                <li>
-                  **Enter Your Value:** Input the number you wish to convert.
-                </li>
-                <li>
-                  **Select "From" Unit:** Choose the unit your value is
-                  currently in (e.g., `mile`).
-                </li>
-                <li>
-                  **Select "To" Unit:** Choose the unit you want to convert to
-                  (e.g., `kilometer`).
-                </li>
-                <li>
-                  **Instant Result:** Click "Convert" to see the precise,
-                  calculated value displayed instantly below.
-                </li>
-              </ol>
-              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
-                <p className="text-sm font-medium text-gray-500">
-                  **Supported Length Units:** Meter, Kilometer, Centimeter,
-                  Millimeter, Mile, Yard, Foot, Inch.
-                </p>
-              </div>
-            </div>
+        {/* Result */}
+        {result !== null && (
+          <div className="mt-6 p-4 border border-[var(--accent)] bg-[var(--card)] rounded-lg shadow-md">
+            <h3 className="font-medium text-[var(--accent)] mb-2">
+              ✅ Conversion Result
+            </h3>
+            <p className="text-lg font-semibold">
+              {value} {fromUnit} = {result} {toUnit}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Rich Info Section */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2">
+          📏 The Ultimate Length Unit Converter
+        </h2>
+        <p className="text-lg text-[var(--foreground)] mb-8">
+          Whether you’re tackling international measurements, academic
+          assignments, or DIY projects, our **Unit Converter** delivers instant,
+          accurate conversions between metric and imperial systems — no formulas
+          or manual calculations needed.
+        </p>
+
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🌎 Bridging Metric and Imperial
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Travel & Geography:** Convert miles to kilometers for distance
+                planning.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Engineering & Construction:** Switch between feet/inches and
+                metric units for blueprints.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Education:** Quickly check your homework or scientific
+                conversions with precision.
+              </li>
+            </ul>
           </div>
 
-          <p className="text-center text-lg text-green-700 font-medium mt-10">
-            Say goodbye to conversion factors and calculators—get your precise
-            answer now!
-          </p>
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🔢 Simple, Accurate Conversion
+            </h3>
+            <ol className="space-y-4 text-[var(--foreground)] list-decimal pl-5">
+              <li>**Enter a Value:** Input the number to be converted.</li>
+              <li>**Select “From” Unit:** Choose the current unit.</li>
+              <li>**Select “To” Unit:** Choose the desired output unit.</li>
+              <li>**Instant Result:** See the calculated value immediately.</li>
+            </ol>
+            <div className="mt-6 p-4 border border-dashed border-[var(--accent)] rounded-lg text-center">
+              <p className="text-sm text-[var(--foreground)]">
+                **Supported Units:** Meter, Kilometer, Centimeter, Millimeter,
+                Mile, Yard, Foot, Inch.
+              </p>
+            </div>
+          </div>
         </div>
+
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Say goodbye to conversion tables — get accurate results instantly with
+          our smart converter!
+        </p>
       </section>
     </main>
   );

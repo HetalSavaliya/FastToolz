@@ -9,10 +9,14 @@ import {
   faRotateLeft,
   faDownload,
   faArrowsRotate,
+  faFilePdf,
+  faTrash,
+  faSyncAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { saveAs } from "file-saver";
 import { Buffer } from "buffer";
-import axios, { AxiosError } from "axios";
+import { saveAs } from "file-saver";
+import { ApiPostFormData } from "@/utils/apiHelper";
+import UploadArea from "@/components/UploadArea";
 
 global.Buffer = Buffer;
 
@@ -21,12 +25,11 @@ export default function PDFRotatePage() {
   const [rotatedBlob, setRotatedBlob] = useState<Blob | null>(null);
   const [pdfName, setPdfName] = useState("rotated.pdf");
   const [loading, setLoading] = useState(false);
-  const resultRef = useRef<HTMLDivElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const [rotation, setRotation] = useState<number>(90); // default angle
+  const [rotation, setRotation] = useState<number>(90);
   const [applyTo, setApplyTo] = useState<"all" | "single" | "multiple">("all");
   const [pageNumbers, setPageNumbers] = useState<number[]>([]);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = async (file: File) => {
     if (file.type !== "application/pdf") {
@@ -47,59 +50,48 @@ export default function PDFRotatePage() {
 
   const handleRotate = async () => {
     if (!pdfFile) {
-      setErrorMessage("Please upload a PDF file first.");
+      setErrorMessage("Please upload a PDF file.");
       return;
     }
+
     setErrorMessage(null);
     setLoading(true);
 
     try {
-      const pdfBytes = await pdfFile.arrayBuffer();
-      const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
-
-      const payload: any = {
-        pdfBytes: pdfBytesBase64,
-        rotation,
-        filename: pdfName,
-        applyTo,
-      };
-
+      const formData = new FormData();
+      formData.append("file", pdfFile);
+      formData.append("rotation", rotation.toString());
+      formData.append("applyTo", applyTo);
       if (applyTo === "single" || applyTo === "multiple") {
-        payload.pageNumbers = pageNumbers;
+        formData.append(
+          "pageNumbers",
+          pageNumbers.map((p) => (p + 1).toString()).join(",")
+        );
       }
 
-      const { data } = await axios.post("/api/pdf-rotate", payload);
+      const { success, data, error } = await ApiPostFormData(
+        "/pdf/pdf-rotate",
+        formData
+      );
+
+      if (!success) {
+        setErrorMessage(`Failed to rotate PDF: ${error}`);
+        return;
+      }
 
       const rotatedPdfBytes = new Uint8Array(
         Buffer.from(data.rotatedPdfBytesBase64, "base64")
       );
       const blob = new Blob([rotatedPdfBytes], { type: "application/pdf" });
-
       setRotatedBlob(blob);
       setPdfName(data.filename);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (error: unknown) {
-      console.error("Error rotating PDF:", error);
-
-      let message = "Unknown error";
-
-      if (error instanceof Error) {
-        message = error.message;
-      }
-
-      if (
-        (error as AxiosError).response &&
-        typeof (error as AxiosError).response?.data === "object" &&
-        typeof ((error as AxiosError).response?.data as any).message ===
-          "string"
-      ) {
-        message = ((error as AxiosError).response?.data as any).message;
-      }
-
-      setErrorMessage(`Failed to rotate PDF: ${message}`);
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Failed to rotate PDF.");
     } finally {
       setLoading(false);
     }
@@ -115,81 +107,90 @@ export default function PDFRotatePage() {
   };
 
   const handleDownload = () => {
-    if (rotatedBlob) {
-      saveAs(rotatedBlob, pdfName);
-    }
+    if (rotatedBlob) saveAs(rotatedBlob, pdfName);
   };
 
   return (
-    <main className="w-full px-4 py-6">
+    <main className="w-full px-4 py-6 transition-colors duration-500 text-[var(--foreground)]">
+      {/* Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-          🔄 PDF Rotate
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
+          🔄 Rotate PDF Pages
         </h1>
-        <p className="text-gray-600">
-          Upload a PDF and rotate all pages, a single page, or multiple pages by
-          any angle.
+        <p className="opacity-80">
+          Upload your PDF and rotate one, multiple, or all pages at any angle.
         </p>
       </div>
 
       {/* Upload Area */}
-      <div
+      <UploadArea
+        title="Drag & drop your PDF here"
+        subtitle="or click to browse — supports single file upload"
+        icon={faFilePdf}
+        accept="application/pdf"
+        multiple={false}
+        onFileChange={(file) => handleFileChange(file as File)}
         onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center cursor-pointer bg-white hover:bg-gray-50 transition mb-6"
-      >
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="application/pdf"
-            hidden
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileChange(file);
-            }}
-          />
-          <div className="text-gray-600">
-            <FontAwesomeIcon icon={faUpload} className="text-2xl mb-2" />
-            <p className="text-sm font-medium">
-              Click to upload or drag a PDF here
-            </p>
-          </div>
-        </label>
-      </div>
+      />
 
-      {/* Controls */}
+      {/* Uploaded PDF Preview */}
       {pdfFile && (
-        <div className="mb-6 space-y-4">
-          {/* Rotation Input */}
+        <div className="mt-6 mb-6 p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FontAwesomeIcon
+              icon={faFilePdf}
+              className="text-[var(--accent)] text-2xl"
+            />
+            <div>
+              <p className="font-medium">{pdfFile.name}</p>
+              <p className="text-sm opacity-70">
+                {(pdfFile.size / 1024).toFixed(1)} KB
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setPdfFile(null)}
+            className="text-red-500 hover:text-red-700 transition-all flex items-center gap-2"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
+      )}
+
+      {/* Rotation Settings */}
+      {pdfFile && (
+        <div className="mt-6 mb-6 p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] shadow-sm space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium">
-              Rotation Angle (any number)
+            <label className="block text-sm font-medium text-[var(--foreground)]">
+              Rotation Angle (in degrees)
             </label>
             <input
               type="number"
               value={rotation}
               onChange={(e) => setRotation(Number(e.target.value))}
-              className="border rounded px-3 py-2 mt-1 w-40"
+              className="mt-1 w-40 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)]"
             />
           </div>
 
-          {/* Apply To */}
           <div>
-            <label className="block text-gray-700 font-medium">Apply To</label>
+            <label className="block text-sm font-medium text-[var(--foreground)]">
+              Apply To
+            </label>
             <select
               value={applyTo}
               onChange={(e) =>
                 setApplyTo(e.target.value as "all" | "single" | "multiple")
               }
-              className="border rounded px-3 py-2 mt-1 w-40"
+              className="mt-1 w-48 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)]"
             >
               <option value="all">All Pages</option>
               <option value="single">Single Page</option>
@@ -197,24 +198,23 @@ export default function PDFRotatePage() {
             </select>
           </div>
 
-          {/* Page Input */}
           {applyTo === "single" && (
             <div>
-              <label className="block text-gray-700 font-medium">
+              <label className="block text-sm font-medium text-[var(--foreground)]">
                 Page Number (starting from 1)
               </label>
               <input
                 type="number"
                 min={1}
                 onChange={(e) => setPageNumbers([Number(e.target.value) - 1])}
-                className="border rounded px-3 py-2 mt-1 w-40"
+                className="mt-1 w-40 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)]"
               />
             </div>
           )}
 
           {applyTo === "multiple" && (
             <div>
-              <label className="block text-gray-700 font-medium">
+              <label className="block text-sm font-medium text-[var(--foreground)]">
                 Page Numbers (comma-separated, starting from 1)
               </label>
               <input
@@ -228,25 +228,24 @@ export default function PDFRotatePage() {
                       .filter((n) => !isNaN(n) && n >= 0)
                   )
                 }
-                className="border rounded px-3 py-2 mt-1 w-60"
+                className="mt-1 w-60 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)]"
               />
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3 mt-4">
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-4 pt-2">
             <button
               onClick={handleRotate}
               disabled={loading}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50 flex items-center gap-2"
+              className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] disabled:opacity-50 flex items-center gap-2"
             >
               <FontAwesomeIcon icon={faArrowsRotate} />
               {loading ? "Rotating..." : "Rotate PDF"}
             </button>
-
             <button
               onClick={handleReset}
-              className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              className="border border-[var(--border)] text-[var(--foreground)] px-5 py-2 rounded-lg hover:bg-[var(--card-hover)] flex items-center gap-2"
             >
               <FontAwesomeIcon icon={faRotateLeft} />
               Reset
@@ -255,96 +254,123 @@ export default function PDFRotatePage() {
         </div>
       )}
 
-      {/* Download */}
+      {/* Download Section */}
       {rotatedBlob && (
         <div
           ref={resultRef}
-          className="mt-6 p-4 border border-green-300 bg-green-50 rounded"
+          className="mt-6 p-4 border border-[var(--accent)] bg-[var(--card)] rounded-lg shadow-md"
         >
-          <h3 className="text-green-700 font-medium mb-2">
-            ✅ PDF rotated successfully and ready to download!
+          <h3 className="font-medium text-[var(--accent)] mb-2">
+            ✅ Rotation successful! Your PDF is ready.
           </h3>
           <button
             onClick={handleDownload}
-            className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
+            className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faDownload} />
-            Download Rotated PDF
+            Download {pdfName}
           </button>
         </div>
       )}
 
       {/* Error Message */}
-      {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
-      <section className="mt-12 pt-8 border-t border-gray-200 text-gray-700 max-w-full">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Perfecting Your Documents: The Essential Guide to PDF Rotation
+      {errorMessage && (
+        <div className="text-red-400 mt-4 font-medium">{errorMessage}</div>
+      )}
+      {/* Rich Content Section */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 pb-2 flex items-center gap-2">
+          🔄 Perfecting Your Documents: The Essential Guide to PDF Rotation
         </h2>
-        <p className="mb-4">
+
+        <p className="text-lg text-[var(--foreground)] mb-8">
           Have you ever scanned a document only to find it tilted, or received a
-          professional report where one page is stuck in **landscape mode**?
-          Misaligned pages disrupt reading flow and undermine professionalism.
-          Our **PDF Rotate tool** is designed to solve this common problem
-          quickly and accurately, allowing you to control the orientation of
-          your digital documents.
+          professional report where one page is stuck in
+          <span className="font-semibold text-[var(--accent)]">
+            {" "}
+            landscape mode
+          </span>
+          ? Misaligned pages disrupt reading flow and undermine professionalism.
+          Our{" "}
+          <span className="font-semibold text-[var(--accent)]">
+            PDF Rotate tool
+          </span>{" "}
+          is designed to fix this quickly and precisely, giving you full control
+          over your document’s orientation.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Why Rotation is More Than Just Flipping a Page
-        </h3>
-        <p className="mb-4">
-          Effective document management requires precision. Most basic tools
-          only offer fixed $90^\circ$ increments, which isn't enough when you
-          have a page that is slightly skewed by a scanner or needs an
-          unconventional orientation for technical layouts. This tool gives you
-          **total flexibility**, allowing you to input **any degree** of
-          rotation—not just $90^\circ$, $180^\circ$, or $270^\circ$. This
-          feature is essential for:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-          <li>
-            **Correcting Scanner Skew:** Fine-tune documents that are only
-            slightly off-kilter.
-          </li>
-          <li>
-            **Standardizing Orientation:** Quickly convert all landscape pages
-            to portrait, or vice-versa, for consistent viewing.
-          </li>
-          <li>
-            **Improving Accessibility:** Ensure your documents are comfortable
-            and accessible for everyone, regardless of the device they use for
-            viewing.
-          </li>
-        </ul>
+        <div className="grid md:grid-cols-2 p-4 border border-[var(--accent)] rounded-lg gap-8">
+          {/* Left Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🌀 Why Rotation is More Than Just Flipping a Page
+            </h3>
+            <ul className="space-y-4 text-[var(--foreground)] list-none pl-0">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <span>
+                  <strong>Precision Matters:</strong> Most tools only rotate in
+                  fixed
+                  <span className="font-semibold text-[var(--accent)]">
+                    {" "}
+                    90° increments
+                  </span>
+                  , but our tool allows <strong>any custom angle</strong> for
+                  perfect alignment.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <span>
+                  <strong>Scanner Fixes:</strong> Correct tilted pages caused by
+                  scanning errors with fine-tuned rotation adjustments.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                <span>
+                  <strong>Orientation Control:</strong> Convert all pages to
+                  portrait or landscape for a uniform reading experience.
+                </span>
+              </li>
+            </ul>
+          </div>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Targeted Rotation: Control at the Page Level
-        </h3>
-        <p className="mb-4">
-          Often, you don't need to rotate the entire file—only a few pages
-          require adjustment. The PDF Rotate tool provides three options for
-          precise application:
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mb-6 ml-4">
-          <li>
-            **All Pages:** Apply the rotation angle uniformly across the entire
-            PDF, perfect for correcting a whole file scanned sideways.
-          </li>
-          <li>
-            **Single Page:** Target one specific page (e.g., page $3$) that
-            needs a specific rotation, leaving the rest of the document
-            untouched.
-          </li>
-          <li>
-            **Multiple Pages:** Use comma-separated page numbers to adjust
-            several pages at once (e.g., $2, 4, 7$). This saves significant time
-            compared to isolating each page manually.
-          </li>
-        </ol>
-        <p>
-          By offering both custom angle control and granular page selection,
-          this tool ensures your final PDF is exactly how it should be:
-          **perfectly aligned and ready to share.**
+          {/* Right Column */}
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              📄 Page-Level Precision
+            </h3>
+            <ol className="space-y-4 text-[var(--foreground)] list-decimal pl-5">
+              <li>
+                <strong>All Pages:</strong> Rotate every page in your PDF by the
+                same degree — ideal for sideways scans.
+              </li>
+              <li>
+                <strong>Single Page:</strong> Choose one page (e.g., page 3) to
+                rotate without affecting others.
+              </li>
+              <li>
+                <strong>Multiple Pages:</strong> Input comma-separated page
+                numbers (e.g., <code>2, 4, 7</code>) for selective rotation.
+              </li>
+            </ol>
+
+            <div className="mt-6 p-4 border border-dashed border-[var(--accent)] rounded-lg text-center">
+              <div className="flex justify-center items-center gap-4 text-[var(--foreground)] text-3xl">
+                📄 ↻ 📄
+              </div>
+              <p className="text-sm text-[var(--foreground)] mt-2">
+                Rotate your pages individually or all at once — precision and
+                flexibility at your fingertips.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Get your pages perfectly aligned — upload, rotate, and download your
+          refined PDF instantly!
         </p>
       </section>
     </main>

@@ -5,14 +5,16 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
-  faUpload,
   faRotateLeft,
   faDownload,
   faPenNib,
+  faFilePdf,
+  faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { saveAs } from "file-saver";
 import { Buffer } from "buffer";
-import axios, { AxiosError } from "axios";
+import UploadArea from "@/components/UploadArea";
+import { ApiPostFormData } from "@/utils/apiHelper";
 
 global.Buffer = Buffer;
 
@@ -48,49 +50,46 @@ export default function PDFSignPage() {
   };
 
   const handleSign = async () => {
-    if (!pdfFile || !signatureText) {
-      setErrorMessage("Please upload a PDF and enter a signature.");
+    if (!pdfFile || !signatureText.trim()) {
+      setErrorMessage("Please upload a PDF and enter a signature text.");
       return;
     }
+
     setErrorMessage(null);
     setLoading(true);
 
     try {
-      const pdfBytes = await pdfFile.arrayBuffer();
-      const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
+      const formData = new FormData();
+      formData.append("file", pdfFile);
+      formData.append("signature_text", signatureText);
+      formData.append("page_number", pageNumber.toString());
+      formData.append("x", x.toString());
+      formData.append("y", y.toString());
 
-      const { data } = await axios.post("/api/pdf-sign", {
-        pdfBytes: pdfBytesBase64,
-        signatureText,
-        pageNumber: pageNumber - 1,
-        x,
-        y,
-        filename: pdfName,
-      });
+      const { success, data, error } = await ApiPostFormData(
+        "/pdf/pdf-sign",
+        formData
+      );
+
+      if (!success) {
+        setErrorMessage(`Failed to sign PDF: ${error}`);
+        return;
+      }
 
       const signedPdfBytes = new Uint8Array(
         Buffer.from(data.signedPdfBytesBase64, "base64")
       );
-      const blob = new Blob([signedPdfBytes], { type: "application/pdf" });
 
+      const blob = new Blob([signedPdfBytes], { type: "application/pdf" });
       setSignedBlob(blob);
       setPdfName(data.filename);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (error: unknown) {
-      let message = "Unknown error";
-      if (error instanceof Error) message = error.message;
-      if (
-        (error as AxiosError).response &&
-        typeof (error as AxiosError).response?.data === "object" &&
-        typeof ((error as AxiosError).response?.data as any).message ===
-          "string"
-      ) {
-        message = ((error as AxiosError).response?.data as any).message;
-      }
-      setErrorMessage(`Failed to sign PDF: ${message}`);
+    } catch (err) {
+      console.error("Failed to sign PDF:", err);
+      setErrorMessage("Failed to sign PDF: Unknown error occurred.");
     } finally {
       setLoading(false);
     }
@@ -113,62 +112,85 @@ export default function PDFSignPage() {
   };
 
   return (
-    <main className="w-full px-4 py-6">
+    <main className="w-full px-4 py-6 transition-colors duration-500 text-[var(--foreground)]">
+      {/* 🡸 Back Link */}
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-[#66AF85] hover:underline mb-6"
+        className="inline-flex items-center text-sm text-[var(--accent)] hover:underline mb-6"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back to Tools
       </Link>
 
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-        ✍️ PDF Sign
-      </h1>
-      <p className="text-gray-600 mb-6">Digitally sign PDF documents.</p>
-
-      {/* Upload */}
-      <div
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center cursor-pointer bg-white hover:bg-gray-50 transition mb-6"
-      >
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="application/pdf"
-            hidden
-            onChange={(e) =>
-              e.target.files?.[0] && handleFileChange(e.target.files[0])
-            }
-          />
-          <div className="text-gray-600">
-            <FontAwesomeIcon icon={faUpload} className="text-2xl mb-2" />
-            <p className="text-sm font-medium">
-              Click to upload or drag a PDF here
-            </p>
-          </div>
-        </label>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-[var(--foreground)]">
+          ✍️ PDF Sign
+        </h1>
+        <p className="opacity-80">
+          Digitally sign your PDF with text-based signatures at any position.
+        </p>
       </div>
 
-      {/* Signature Form */}
+      {/* Upload Area */}
+      <UploadArea
+        title="Drag & drop your PDFs here"
+        subtitle="or click to browse — supports single files"
+        icon={faFilePdf}
+        accept="application/pdf"
+        multiple={false}
+        onFileChange={(file) => handleFileChange(file as File)}
+        onDrop={handleDrop}
+      />
+
+      {/* Selected File Info */}
       {pdfFile && (
-        <div className="space-y-4 mb-6">
-          <div>
-            <label className="block text-gray-700 font-medium">
-              Signature Text
-            </label>
-            <input
-              type="text"
-              value={signatureText}
-              onChange={(e) => setSignatureText(e.target.value)}
-              className="border rounded px-3 py-2 mt-1 w-full"
+        <div className="mt-6 mb-6 p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] text-[var(--foreground)] shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FontAwesomeIcon
+              icon={faFilePdf}
+              className="text-[var(--accent)] text-2xl"
             />
+            <div>
+              <p className="font-medium">{pdfFile.name}</p>
+              <p className="text-sm opacity-70">
+                {(pdfFile.size / 1024).toFixed(1)} KB
+              </p>
+            </div>
           </div>
 
-          <div className="flex gap-4 flex-wrap">
+          <button
+            onClick={() => setPdfFile(null)}
+            className="text-red-500 hover:text-red-700 transition-all flex items-center gap-2"
+          >
+            <FontAwesomeIcon icon={faTrashAlt} />
+            Delete
+          </button>
+        </div>
+      )}
+
+      {/* Form Fields */}
+      {pdfFile && (
+        <div className="mt-6 mb-6">
+          <h3 className="font-semibold mb-2 text-[var(--foreground)]">
+            🖋️ Signature Details
+          </h3>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <label className="block text-gray-700 font-medium">
+              <label className="block text-sm mb-1 text-[var(--foreground)]">
+                Signature Text
+              </label>
+              <input
+                type="text"
+                value={signatureText}
+                onChange={(e) => setSignatureText(e.target.value)}
+                placeholder="e.g., John Doe"
+                className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1 text-[var(--foreground)]">
                 Page Number
               </label>
               <input
@@ -176,39 +198,43 @@ export default function PDFSignPage() {
                 min={1}
                 value={pageNumber}
                 onChange={(e) => setPageNumber(Number(e.target.value))}
-                className="border rounded px-3 py-2 mt-1 w-28"
+                className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
               />
             </div>
-            <div>
-              <label className="block text-gray-700 font-medium">
-                X Position
-              </label>
-              <input
-                type="number"
-                value={x}
-                onChange={(e) => setX(Number(e.target.value))}
-                className="border rounded px-3 py-2 mt-1 w-28"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium">
-                Y Position
-              </label>
-              <input
-                type="number"
-                value={y}
-                onChange={(e) => setY(Number(e.target.value))}
-                className="border rounded px-3 py-2 mt-1 w-28"
-              />
+
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm mb-1 text-[var(--foreground)]">
+                  X Position
+                </label>
+                <input
+                  type="number"
+                  value={x}
+                  onChange={(e) => setX(Number(e.target.value))}
+                  className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+                />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm mb-1 text-[var(--foreground)]">
+                  Y Position
+                </label>
+                <input
+                  type="number"
+                  value={y}
+                  onChange={(e) => setY(Number(e.target.value))}
+                  className="border border-[var(--accent)] bg-[var(--card)] text-[var(--foreground)] rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-wrap gap-3 mt-4">
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-3 mt-5">
             <button
               onClick={handleSign}
               disabled={loading}
-              className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] disabled:opacity-50 flex items-center gap-2"
+              className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] disabled:opacity-50 flex items-center gap-2 transition-all"
             >
               <FontAwesomeIcon icon={faPenNib} />
               {loading ? "Signing..." : "Sign PDF"}
@@ -216,26 +242,27 @@ export default function PDFSignPage() {
 
             <button
               onClick={handleReset}
-              className="border border-gray-300 px-4 py-2 rounded text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              className="border border-[var(--border)] text-[var(--foreground)] px-5 py-2 rounded-lg hover:bg-[var(--card)] transition-all flex items-center gap-2"
             >
+              <FontAwesomeIcon icon={faRotateLeft} />
               Reset
             </button>
           </div>
         </div>
       )}
 
-      {/* Download */}
+      {/* Download Section */}
       {signedBlob && (
         <div
           ref={resultRef}
-          className="mt-6 p-4 border border-green-300 bg-green-50 rounded"
+          className="mt-6 p-4 border border-[var(--accent)] bg-[var(--card)] rounded-lg shadow-md"
         >
-          <h3 className="text-green-700 font-medium mb-2">
+          <h3 className="font-medium text-[var(--accent)] mb-2">
             ✅ PDF signed successfully and ready to download!
           </h3>
           <button
             onClick={handleDownload}
-            className="bg-[#66AF85] text-white px-4 py-2 rounded hover:bg-[#589c71] flex items-center gap-2"
+            className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg hover:bg-[var(--accent-hover)] flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faDownload} />
             Download Signed PDF
@@ -244,54 +271,61 @@ export default function PDFSignPage() {
       )}
 
       {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
-      <section className="mt-16 pt-8 border-t border-gray-200 text-gray-700">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          The Power of Digital Signatures in PDF Documents
+
+      {/* Info Section */}
+      <section className="rich-content text-[var(--foreground)] mt-16 pt-8 border-t border-gray-200 max-w-full">
+        <h2 className="text-3xl font-bold mb-6 pb-2 text-[var(--foreground)]">
+          ✍️ Digitally Sign PDFs with Precision
         </h2>
-        <p className="mb-4">
-          In today's digital workflow, the ability to **digitally sign
-          documents** without printing, signing, and scanning is essential for
-          speed and efficiency. Our PDF Sign Tool provides a simple, secure way
-          to affix a text-based signature or stamp to any page of your PDF file.
+        <p className="text-lg mb-8 text-[var(--foreground)]">
+          Digitally sign your PDF files easily — no printing, scanning, or
+          manual effort required. Add a text-based signature anywhere on any
+          page using precise X and Y coordinates.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Precision Placement for Professional Results
-        </h3>
-        <p className="mb-4">
-          Unlike many basic tools that drop a signature randomly, this utility
-          gives you fine-grained control over where your text is placed. Using
-          **X and Y coordinates** (relative to the bottom-left corner of the
-          page, from 0 to 100), you can precisely position your signature,
-          ensuring it lands perfectly on the required signature line.
-        </p>
+        <div className="grid md:grid-cols-2 gap-8 border border-[var(--accent)] rounded-lg p-4">
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🎯 Signature Placement
+            </h3>
+            <ul className="space-y-4 list-none pl-0 text-[var(--foreground)]">
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Custom Page:** Choose exactly which page to sign.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Position Control:** Adjust X/Y values for precise placement.
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold mr-3">•</span>
+                **Professional Output:** Perfect for contracts, approvals, and
+                certificates.
+              </li>
+            </ul>
+          </div>
 
-        <p className="mb-4">
-          This is particularly useful for formal contracts, approval forms, and
-          legal documents where accurate placement is critical. Simply set the
-          **Page Number** and define the coordinates to achieve a professional,
-          standardized result every time.
-        </p>
+          <div>
+            <h3 className="text-xl font-bold text-[var(--accent)] mb-3 flex items-center gap-2">
+              🧭 Coordinate System
+            </h3>
+            <ol className="space-y-3 list-decimal pl-5 text-[var(--foreground)]">
+              <li>**X = 0** → Left edge; **X = 100** → Right edge.</li>
+              <li>**Y = 0** → Bottom edge; **Y = 100** → Top edge.</li>
+              <li>
+                A signature at **(50, 50)** appears in the center of the page.
+              </li>
+            </ol>
+            <p className="mt-4 opacity-80">
+              Coordinates are normalized, so your signature stays consistent
+              across any paper size — A4, Letter, or others.
+            </p>
+          </div>
+        </div>
 
-        <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-          Understanding Coordinate Systems
-        </h3>
-        <p className="mb-4">
-          The coordinate system used here is relative to the page size, making
-          it intuitive:
-        </p>
-        <ul className="list-disc list-inside space-y-2 mb-6 ml-4">
-          <li>**X = 0** is the left edge; **X = 100** is the right edge.</li>
-          <li>**Y = 0** is the bottom edge; **Y = 100** is the top edge.</li>
-          <li>
-            A signature at $(\mathbf{50}, \mathbf{50})$ will appear exactly in
-            the center of the selected page.
-          </li>
-        </ul>
-        <p>
-          This ensures your signature's location remains constant, regardless of
-          the PDF's specific paper size (A4, Letter, etc.), simplifying your
-          signing process.
+        <p className="text-center text-lg text-[var(--accent)] font-medium mt-10">
+          Sign smarter — place your signature exactly where it belongs with full
+          control.
         </p>
       </section>
     </main>

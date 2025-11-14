@@ -15,6 +15,7 @@ import { saveAs } from "file-saver";
 import { Buffer } from "buffer";
 import axios, { AxiosError } from "axios";
 import UploadArea from "@/components/UploadArea";
+import { ApiPostFormData } from "@/utils/apiHelper";
 
 global.Buffer = Buffer;
 
@@ -49,49 +50,46 @@ export default function PDFUnlockPage() {
       setErrorMessage("Please upload a PDF and enter the password to unlock.");
       return;
     }
+
     setErrorMessage(null);
     setLoading(true);
 
     try {
-      const pdfBytes = await pdfFile.arrayBuffer();
-      const pdfBytesBase64 = Buffer.from(pdfBytes).toString("base64");
+      // Create FormData to send file and password
+      const formData = new FormData();
+      formData.append("file", pdfFile);
+      formData.append("password", password);
 
-      const { data } = await axios.post("/api/pdf-unlock", {
-        pdfBytes: pdfBytesBase64,
-        password: password,
-        filename: pdfName,
-      });
+      // Call backend API using apiHelper
+      const { success, data, error } = await ApiPostFormData(
+        "/pdf/pdf-unlock",
+        formData
+      );
 
+      if (!success) {
+        setErrorMessage(`Failed to unlock PDF: ${error}`);
+        return;
+      }
+
+      // Convert Base64 returned by backend to Uint8Array
       const unlockedPdfBytes = new Uint8Array(
         Buffer.from(data.unlockedPdfBytesBase64, "base64")
       );
-      const blob = new Blob([unlockedPdfBytes], { type: "application/pdf" });
 
+      // Create Blob for download
+      const blob = new Blob([unlockedPdfBytes], { type: "application/pdf" });
       setUnlockedBlob(blob);
+
+      // Update filename
       setPdfName(data.filename);
 
+      // Scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } catch (error: unknown) {
-      console.error("Error unlocking PDF:", error);
-
-      let message = "Unknown error";
-
-      if (error instanceof Error) {
-        message = error.message;
-      }
-
-      if (
-        (error as AxiosError).response &&
-        typeof (error as AxiosError).response?.data === "object" &&
-        typeof ((error as AxiosError).response?.data as any).message ===
-          "string"
-      ) {
-        message = ((error as AxiosError).response?.data as any).message;
-      }
-
-      setErrorMessage(`Failed to unlock PDF: ${message}`);
+    } catch (err: unknown) {
+      console.error("Unexpected error:", err);
+      setErrorMessage("Failed to unlock PDF: Unknown error occurred.");
     } finally {
       setLoading(false);
     }
